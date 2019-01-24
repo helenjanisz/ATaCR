@@ -17,7 +17,9 @@ badstalist = 'NOISETC_SAMPLE_CI/Bad_Z.txt';
 badhorzlist = 'NOISETC_SAMPLE_CI/Bad_H.txt';
 badpreslist = 'NOISETC_SAMPLE_CI/Bad_P.txt';
 
-%%%%% DO NOT EDIT BELOW %%%%%%%%
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%
+%% %%%%%%%%%%%%%%%%%%%%%%%%% DO NOT EDIT BELOW %%%%%%%%%%%%%%%%%%%%%%%%% %%
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%
 setup_parameter;
 
 if exist(badstalist)
