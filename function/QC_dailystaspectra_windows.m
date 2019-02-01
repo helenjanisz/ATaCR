@@ -115,9 +115,10 @@ end
 %%
 if isfigure
 figure(96)
-subplot(919)
-plot(TD(goodwins),1,'p');  xlim([0 86400]);
-xlabel('Seconds')
+cp = subplot(919);
+plot(TD(goodwins),1,'kp');  xlim([0 86400]);
+xlabel('Seconds');
+set(cp,'YTickLabel',[]);
 end
 
 end
