@@ -8,8 +8,8 @@
 clear; close all
 
 % CODE OPTIONS
-isfigure_spectrogram = 0; % generate spectrograms for each day
-isfigure_powerspec = 0; % generate power spectra for each day
+isfigure_spectrogram = 1; % generate spectrograms for each day
+isfigure_powerspec = 1; % generate power spectra for each day
 isfigure_orient = 1;
 issavefigure = 1; % save output figures
 isoverwrite = 1; % overwrite spectra files

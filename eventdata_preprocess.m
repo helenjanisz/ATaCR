@@ -12,31 +12,40 @@
 % HAJ July 2016
 
 addpath ('function');
-INPUTdir = 'NOISETC_SAMPLE_CI/DATA/datacache/';
-OUTPUTdir = 'NOISETC_SAMPLE_CI/DATA/datacache_prepro/';
+INPUTdir = 'NOISETC_CI/DATA/datacache/';
+OUTPUTdir = 'NOISETC_CI/DATA/datacache_prepro/';
 
 % pole_zero_dir='directory_where_SACPZ_files_are_here'; % for response removal if using sac PZ files
 pole_zero_dir=''; % if not using leave blank
 
 network = '7D';
-station = 'G03A';
+station = 'M08A';
 % channels = {'HHZ','HH1','HH2','HDH'};
 % channels = {'HXZ','HX1','HX2','HXH'};
 channels = {'BHZ','BH1','BH2','BDH'};
 % channels = {'HHZ','HH1','HH2','BDH'};
 
-% resprm = [1 1 1 0]; % for each channel 1 means remove response, 0 means don't. Order matches channels vector
-% gaincorr = [2.37 2.37 2.37 2.37]; % gain correction factor to multiply data by for each channel
-% samprate = [5 5 5 5]; % new sample rate for each channel (note: for tilt/comp package must all be equal)
-% hp_filt = [0 0 0 1]; % apply high pass filter
-
+% Example for case where no gain correction is applied and response is
+% removed from all channels
+%%%%
 resprm = [1 1 1 1]; % for each channel 1 means remove response, 0 means don't. Order matches channels vector
 gaincorr = [1 1 1 1]; % gain correction factor to multiply data by for each channel
-samprate = [5 5 5 5]; % new sample rate for each channel (note: for tilt/comp package must all be equal)
+samprate = 5; % new sample rate for each channel (note: for tilt/comp package must all be equal)
 hp_filt = [0 0 0 0]; % apply high pass filter
 
+% Example for case where gain correction is applied and response is only
+% removed from seismometer channels
+%%%%
+% resprm = [1 1 1 0]; % for each channel 1 means remove response, 0 means don't. Order matches channels vector
+% gaincorr = [2.37 2.37 2.37 2.37]; % gain correction factor to multiply data by for each channel
+% samprate = 5; % new sample rate for each channel (note: for tilt/comp package must all be equal)
+% hp_filt = [0 0 0 1]; % apply high pass filter
+
+% parameters for high pass for response removal
 lo_corner = 0.001;  % in Hz
         npoles=5;
+
+%%%%% end user input parameters %%%%%
 
 if ~exist(OUTPUTdir)
     mkdir(OUTPUTdir);
@@ -125,15 +134,15 @@ end
         %%%%%%%%%%%%%%%%%
         % DOWNSAMPLING
         %%%%%%%%%%%%%%%%%
-        if rate == samprate(ic)
+        if rate == samprate
             taxis = [0:dt:(length(data_raw)-1)*dt]';
         else
-            dt_new = 1/samprate(ic);
+            dt_new = 1/samprate;
             [data_raw,taxis] = resample(data_raw,dt_new,dt);
         end
         
         traces_new(idxch).data = data_raw;
-        traces_new(idxch).sampleRate = samprate(ic);
+        traces_new(idxch).sampleRate = samprate;
         traces_new(idxch).sampleCount = length(data_raw);
     end % end channel loop
     %save good files

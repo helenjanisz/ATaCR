@@ -43,13 +43,10 @@ a_val_dep = 0.05;
 
 % Transfer Function Options
 TF_list = {'ZP','Z1','Z2-1','ZP-21','ZH','ZP-H'};
-% convention: Z1 = Z/1, Z - signal, 1 - noise
-%             Z2-1 = Z - signal, 2 - noise, with Z1 already taken into account
-%             ZH - Z - signal, H - rotated max horizontal noise direction,
-% Typical options for tilt compliance removal: 'ZP','1P','2P','Z1','Z2-1','ZP-21','ZH','ZP-H'
-% Note: should be able to put in other options (e.g. Z2-1P, removing
-% compliance then component wise tilt, but those not thoroughly tested yet)
-% Currently rotation only implemeted for ZH
+% convention: Z1 = transfer function between Z and H1
+%             Z2-1 = transfer function between Z with H1 removed, and H2
+%		      ZP-21 = transfer function between Z with H1 and H2 removed, and P
+%             ZH = transfer function between Z and rotated max horizontal noise direction (H)
 
 % Correction Options
 taptime = 0.075; % taper for seismogram correction step

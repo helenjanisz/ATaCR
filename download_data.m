@@ -12,18 +12,19 @@ clear;
 
 javaaddpath('IRIS-WS-2.0.6.jar');
 
-startlist = 'NOISETC_SAMPLE_CI/starttimes_CItest.txt'; % list of start times for data download
+startlist = 'NOISETC_CI/starttimes_CItest.txt'; % list of start times for data download
 datalength = 86400; % length of time series after each start time in seconds (default 86400, code not thoroughly tested for other values)
 
-download_stations = '*'; % list of stations to download (* for all)
+download_networks = '7D'; % list of networks to download
+download_stations = 'M08A'; % list of stations to download (* for all)
 
 % Channel Names
-chz_vec = 'BHZ,HHZ'; % list of acceptable names for Z component
-ch1_vec = 'BH1,HH1'; % list of acceptable names for H1 component
-ch2_vec = 'BH2,HH2'; % list of acceptable names for H2 component
-chp_vec = 'BDH,HDH'; % list of acceptable names for P component
+chz_vec = 'BHZ'; % list of acceptable names for Z component
+ch1_vec = 'BH1'; % list of acceptable names for H1 component
+ch2_vec = 'BH2'; % list of acceptable names for H2 component
+chp_vec = 'BDH'; % list of acceptable names for P component
 
-datacache = 'NOISETC_SAMPLE_CI/DATA/datacache_day'; % output folder for data
+datacache = 'NOISETC_CI/DATA/datacache_day'; % output folder for data
 
 %%%%% end user input parameters %%%%%
 

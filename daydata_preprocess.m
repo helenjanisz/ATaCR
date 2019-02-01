@@ -10,49 +10,34 @@
 % Each may be included or excluded depending on the needs of the user.
 % HAJ July 2016
 
-%%%%%% Check the response removal function, where is it getting the infro
-%%%% also check the low corner, compare with the original spectrograms I
-%%%% have... something looks weird
-
 addpath ('function');
-INPUTdir = 'NOISETC_SAMPLE_CI/DATA/datacache_day';
-OUTPUTdir = 'NOISETC_SAMPLE_CI/DATA/datacache_day_preproc/';
+INPUTdir = 'NOISETC_CI/DATA/datacache_day';
+OUTPUTdir = 'NOISETC_CI/DATA/datacache_day_preproc/';
 
 % pole_zero_dir='directory_where_SACPZ_files_are_here'; % for response removal if using sac PZ files
 pole_zero_dir=''; % if not using leave blank
 
-
 network = '7D';
-station = 'G03A';
+station = 'M08A';
 % channels = {'HHZ','HH1','HH2','HDH'};
 % channels = {'HXZ','HX1','HX2','HXH'};
 channels = {'BHZ','BH1','BH2','BDH'};
-% channels = {'SHZ','SH1','SH2','BDH'};
 % channels = {'HHZ','HH1','HH2','BDH'};
-% channels = {'LHZ','LHN','LHE'};
 
 % Example for case where no gain correction is applied and response is
 % removed from all channels
 %%%%
 resprm = [1 1 1 1]; % for each channel 1 means remove response, 0 means don't. Order matches channels vector
-% resprm = [0 0 0 0]; % for each channel 1 means remove response, 0 means don't. Order matches channels vector
 gaincorr = [1 1 1 1]; % gain correction factor to multiply data by for each channel
-samprate = [5 5 5 5]; % new sample rate for each channel (note: for tilt/comp package must all be equal)
+samprate = 5; % new sample rate for each channel (note: for tilt/comp package must all be equal)
 hp_filt = [0 0 0 0]; % apply high pass filter; high pass is applied during response removal, should only be 1 if response not being removed
-% hp_filt = [1 1 1 1]; % apply high pass filter; high pass is applied during response removal, should only be 1 if response not being removed
-
-
-% resprm = [1 1 1]; % for each channel 1 means remove response, 0 means don't. Order matches channels vector
-% gaincorr = [1 1 1 ]; % gain correction factor to multiply data by for each channel
-% samprate = [1 1 1]; % new sample rate for each channel (note: for tilt/comp package must all be equal)
-% hp_filt = [0 0 0]; % apply high pass filter; high pass is applied during response removal, should only be 1 if response not being removed
 
 % Example for case where gain correction is applied and response is only
 % removed from seismometer channels
 %%%%
 % resprm = [1 1 1 0]; % for each channel 1 means remove response, 0 means don't. Order matches channels vector
 % gaincorr = [2.37 2.37 2.37 2.37]; % gain correction factor to multiply data by for each channel
-% samprate = [5 5 5 5]; % new sample rate for each channel (note: for tilt/comp package must all be equal)
+% samprate = 5; % new sample rate for each channel (note: for tilt/comp package must all be equal)
 % hp_filt = [0 0 0 1]; % apply high pass filter; high pass is applied during response removal, should only be 1 if response not being removed
 
 
@@ -144,15 +129,15 @@ for ie =1 : length(data_filenames) % begin file loop for each station
         %%%%%%%%%%%%%%%%%
         % DOWNSAMPLING
         %%%%%%%%%%%%%%%%%
-        if rate == samprate(ic)
+        if rate == samprate
             taxis = [0:dt:(length(data_raw)-1)*dt]';
         else
-            dt_new = 1/samprate(ic);
+            dt_new = 1/samprate;
             [data_raw,taxis] = resample(data_raw,dt_new,dt);
         end
         
         traces_day_new(idxch).data = data_raw;
-        traces_day_new(idxch).sampleRate = samprate(ic);
+        traces_day_new(idxch).sampleRate = samprate;
         traces_day_new(idxch).sampleCount = length(data_raw);
     end % end channel loop
     %save good files
