@@ -61,15 +61,11 @@ end
 filesuff = sprintf('*_%s_%s.mat',network,station);
 data_filenames = dir(fullfile(INPUTdir,network,station,'/',filesuff));
 for ie =1 : length(data_filenames) % begin file loop for each station
-    %     load(fullfile(INPUTdir,network,station,'/',data_filenames(ie).name));
     load(fullfile(INPUTdir,network,station,'/',data_filenames(ie).name));
     traces_day_new = traces_day;
     dayid = data_filenames(ie).name(1:12);
     prob=0;
-    if isempty(traces_day(1).sacpz.poles) & isempty(pole_zero_dir)
-        continue
-    end
-  
+    
     for ic = 1:length(channels) % begin channel loop
         chan = channels(ic);
         idxch = find(ismember({traces_day.channel},chan));
@@ -89,6 +85,10 @@ for ie =1 : length(data_filenames) % begin file loop for each station
         % REMOVE RESPONSE
         %%%%%%%%%%%%%%%%%
         if resprm(ic) ==1
+            if isempty(traces_day(1).sacpz.poles) & isempty(pole_zero_dir)
+                prob = 1;
+                continue
+            end
             chan_data = rm_resp(chan_data,dayid,lo_corner,npoles,pole_zero_dir);
             data_raw = chan_data.data_cor;
         else
