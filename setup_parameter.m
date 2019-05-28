@@ -3,11 +3,11 @@
 % path for matlab codes and functions
 addpath ('function');
 % location of the continuous matlab files for spectral properties
-WORKINGdir = 'NOISETC_SAMPLE_CI/DATA/datacache_day_preproc/';
+WORKINGdir = 'NOISETC_CI/DATA/datacache_day_preproc/';
 % output directory for spectra
-OUTdir = 'NOISETC_SAMPLE_CI/DATA/NOISETC';
+OUTdir = 'NOISETC_CI/DATA/NOISETC';
  % directory for figure output
-FIGdir = 'NOISETC_SAMPLE_CI/FIGURES/NOISETC';
+FIGdir = 'NOISETC_CI/FIGURES/NOISETC';
 
 
 % information for station
