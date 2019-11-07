@@ -1,4 +1,4 @@
-function [Zraw,H1raw,H2raw,Praw,taxisZ,taxis1,taxis2,taxisP,dt] = varsetup_correctevent(sta,chz_vec,ch1_vec,ch2_vec,chp_vec)
+function [Zraw,H1raw,H2raw,Praw,taxisZ,taxis1,taxis2,taxisP,dt] = varsetup_correctevent(sta,chz_vec,ch1_vec,ch2_vec,chp_vec,T)
 
 idxZ = find(ismember({sta.traces.channel},chz_vec));
 idx1 = find(ismember({sta.traces.channel},ch1_vec));
@@ -51,7 +51,7 @@ if length(unique(data_length))>1
     return
 end
 
-if data_length*dt<7200
+if data_length*dt<T
     disp('Not enough data. Skipping.')
     Zraw=nan; H1raw=nan; H2raw=nan; Praw=nan; taxisZ=nan; taxis1=nan; taxis2=nan; taxisP=nan; dt=nan;
     return
