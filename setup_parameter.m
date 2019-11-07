@@ -12,7 +12,7 @@ FIGdir = 'NOISETC_CI/FIGURES/NOISETC';
 
 % information for station
 network = '7D'; 
-station = 'M08A'; 
+stations = textread('./NOISETC_CI/stalist.txt','%s'); 
 
 % Channel Names
 chz_vec = {['HHZ'], ['BHZ'], ['LHZ']}; % list of acceptable names for Z component
