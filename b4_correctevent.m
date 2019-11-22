@@ -10,13 +10,13 @@ isoverwrite =1;
 
 T1 = 10; T2= 150; %filter period range for plotting seismic data
 
-inpath_event = 'NOISETC_SAMPLE_CI/DATA/datacache_prepro/'; % path to earthquake data (data to be corrected)
+inpath_event = 'NOISETC_CI/DATA/datacache_prepro/'; % path to earthquake data (data to be corrected)
 
 % input lists of stations with bad components, file doesn't have to exists
 % leave as default if no bad stations
-badstalist = 'NOISETC_SAMPLE_CI/Bad_Z.txt';
-badhorzlist = 'NOISETC_SAMPLE_CI/Bad_H.txt';
-badpreslist = 'NOISETC_SAMPLE_CI/Bad_P.txt';
+badstalist = 'NOISETC_CI/Bad_Z.txt';
+badhorzlist = 'NOISETC_CI/Bad_H.txt';
+badpreslist = 'NOISETC_CI/Bad_P.txt';
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%
 %% %%%%%%%%%%%%%%%%%%%%%%%%% DO NOT EDIT BELOW %%%%%%%%%%%%%%%%%%%%%%%%% %%

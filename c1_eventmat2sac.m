@@ -11,9 +11,8 @@ clear;
 
 setup_parameter;
 
-% inpath_uncorr = './ENAM/DATA/EVENT_preprocess/';
 inpath_uncorr = 'path/to/local/event/sac/files/';
-ZP21_index = 3;
+corr_idx = 3;
 channel = 'BHZ';
 
 
@@ -40,7 +39,7 @@ for ista = 1:length(stadirs)
             continue
         end
         load(fullfile(inpath_corr,filenames_corr(iev).name))
-        corrdata = corrseis(ZP21_index).timeseries;
+        corrdata = corrseis(corr_idx).timeseries;
         
         % Load data headers
         sacin = rdsac(fullfile(sprintf('%s/%s/%s.%s.%s.%s.sac',inpath_uncorr,corrected.params.eventid, corrected.params.eventid, corrected.params.network, corrected.params.station, channel)));
@@ -55,7 +54,7 @@ for ista = 1:length(stadirs)
                     mkdir(opath);
                 end
                 H = sacin.HEADER;
-                data = corrseis(ZP21_index).timeseries;
+                data = corrseis(corr_idx).timeseries;
 %                 evid =  datestr(traces(itr).startTime,'yyyymmddhhMM');
                 evid = corrected.params.eventid;
                 fullevid = [evid,num2str(H.NZSEC,'%02d'),num2str(H.NZMSEC,'%03d')];
