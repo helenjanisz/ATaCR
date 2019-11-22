@@ -4,6 +4,7 @@
 clear all; close all
 
 isfigure_sta = 1;
+isfigure_spectra = 1;
 issavefigure = 1;
 isoverwrite =1;
 
@@ -107,8 +108,13 @@ for ie = 1:length(event_filename)
             outpath = sprintf('%s/CORRSEISAVTF/%s/',OUTdir,netsta);
             figoutpath=sprintf('%s/CORREVENTS',FIGdir);
         end
+		
+		if ~isoverwrite && exist(sprintf('%s/%s_%s_corrseis.mat',outpath,netsta,eventid))==2
+            disp([eventid,' exists. Skipping...'])
+            continue
+        end
                 
-        [Zraw,H1raw,H2raw,Praw,taxisZ,taxis1,taxis2,taxisP,dt] = varsetup_correctevent(sta,chz_vec,ch1_vec,ch2_vec,chp_vec);
+        [Zraw,H1raw,H2raw,Praw,taxisZ,taxis1,taxis2,taxisP,dt] = varsetup_correctevent(sta,chz_vec,ch1_vec,ch2_vec,chp_vec,T);
         if isnan(Zraw);
             continue
         end
@@ -291,6 +297,21 @@ for ie = 1:length(event_filename)
                 elseif tf_op==2
                     figure(102)
                     filename=sprintf('%s/%s_%s_corrseis_av',figoutpath,eventid,netsta);
+                    print(gcf,'-dpng',filename)
+                end
+            end
+        end
+		%plot spectra against Peterson's low and high noise models
+		if isfigure_spectra
+            plot_corrspectra(T1,T2,Zraw,corrseis,f,NFFT,dt,taxisZ,eventid,netsta,lp,hp)
+            if issavefigure==1
+                if tf_op ==1
+                    figure(1)
+                    filename=sprintf('%s/%s_%s_spectra',figoutpath,eventid,netsta);
+                    print(gcf,'-dpng',filename)
+                elseif tf_op==2
+                    figure(1)
+                    filename=sprintf('%s/%s_%s_spectra_av',figoutpath,eventid,netsta);
                     print(gcf,'-dpng',filename)
                 end
             end
