@@ -54,6 +54,9 @@ for ista = 1:length(stadirs)
                     mkdir(opath);
                 end
                 H = sacin.HEADER;
+                H.DELTA = corrected.params.dt;
+                H.NPTS = length(corrected.params.taxis);
+                
                 data = corrseis(corr_idx).timeseries;
 %                 evid =  datestr(traces(itr).startTime,'yyyymmddhhMM');
                 evid = corrected.params.eventid;
@@ -66,4 +69,3 @@ for ista = 1:length(stadirs)
     end
     
 end
-    
