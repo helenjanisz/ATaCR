@@ -19,7 +19,7 @@ OUTPUTdir = 'NOISETC_CI/DATA/datacache_prepro/';
 pole_zero_dir=''; % if not using leave blank
 
 network = '7D';
-station = textread('./NOISETC_CI/stalist.txt','%s');;
+stations = textread('./NOISETC_CI/stalist.txt','%s');
 % channels = {'HHZ','HH1','HH2','HDH'};
 % channels = {'HXZ','HX1','HX2','HXH'};
 channels = {'BHZ','BH1','BH2','BDH'};
