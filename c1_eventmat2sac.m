@@ -6,6 +6,11 @@
 % J. Russell & H. Janiszewski 
 % hjaniszewski@carnegiescience.edu
 % updated 11/19
+%
+% W. Hawley modified to use original sac start time information instead of
+% matlab generated filename... there was in issue using the wrong start
+% time for some files
+% updated 09/20
 
 clear;
 
@@ -60,7 +65,11 @@ for ista = 1:length(stadirs)
                 data = corrseis(corr_idx).timeseries;
 %                 evid =  datestr(traces(itr).startTime,'yyyymmddhhMM');
                 evid = corrected.params.eventid;
-                fullevid = [evid,num2str(H.NZSEC,'%02d'),num2str(H.NZMSEC,'%03d')];
+                startDate = datetime(H.NZYEAR,1,H.NZJDAY); % use this to convert jday to month - day
+                startYear = num2str(year(startDate), '%04d');
+                startMonth = num2str(month(startDate), '%02d');
+                startDay = num2str(day(startDate), '%02d');
+                fullevid = [startYear,startMonth,startDay,num2str(H.NZHOUR,'%02d'),num2str(H.NZMIN,'%02d'),num2str(H.NZSEC,'%02d'),num2str(H.NZMSEC,'%03d')];
                 startTime = datenum(fullevid,'yyyymmddhhMMSSFFF');
                 sac_path = fullfile(sprintf('%s/%s.%s.%s.%s.sac',opath,evid, sacin.HEADER.KNETWK, sacin.HEADER.KSTNM, sacin.HEADER.KCMPNM));
                 mksac(sac_path,data,startTime,H);                
