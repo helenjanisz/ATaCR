@@ -1,4 +1,5 @@
 The Automated Tilt and Compliance Removal (ATaCR, pronounced attacker) package is a set of codes written in MATLAB, developed for characterizing and removing tilt and compliance noise from ocean bottom seismometer (OBS) instruments. Details related to the quality control procedures used to obtain stations’ noise characteristics can be found in Janiszewski et al. (2019). We employ tilt and compliance corrections based on the methods of Crawford and Webb (2000) and Bell et al. (2014). Please see the ATaCR Manual for more details.
 
+The following MATLAB toolboxes are required: Curve Fitting, Optimization, Statistics and Machine Learning, Image Processing, Signal Processing.
 
 Users of this code should cite: Helen A Janiszewski, James B Gaherty, Geoffrey A Abers, Haiying Gao, Zachary C Eilon, Amphibious surface-wave phase-velocity measurements of the Cascadia subduction zone, Geophysical Journal International, Volume 217, Issue 3, June 2019, Pages 1929–1948, https://doi.org/10.1093/gji/ggz051
