@@ -5,7 +5,7 @@
 % matfiles (default is 24 hours of data in each file).
 
 % H. Janiszewski 
-% hjaniszewski@carnegiescience.edu
+% hajanisz@hawaii.edu
 % updated 2/18
 
 clear;

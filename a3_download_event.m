@@ -4,7 +4,7 @@
 % compliance noise
 
 % H. Janiszewski 
-% hjaniszewski@carnegiescience.edu
+% hajanisz@hawaii.edu
 % updated 11/17
 
 clear;

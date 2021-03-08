@@ -1,7 +1,7 @@
 % cleanstasspectra
 % clean noise spectra to remove spurious days and calculate deployment
 % averages
-% Helen Janiszewski 1/2017
+% Helen Janiszewski 1/2021
 
 clear; close all
 
@@ -9,7 +9,7 @@ clear; close all
 % CODE OPTIONS 
 isfigure = 1;
 issavefigure = 1;
-isoverwrite = 0; % if set to 0, will skip previously processed files
+isoverwrite = 1; % if set to 0, will skip previously processed files
 
 % DO NOT EDIT BELOW
 setup_parameter;
@@ -74,6 +74,10 @@ for ista = 1:length(stations)
         spectsm(:,ie,3) = smooth(specprop.power.c22_stack,40);
         spectsm(:,ie,4) = smooth(specprop.power.cpp_stack,40);
         
+        % orientations
+        orients(ie) = specprop.params.rotor;
+        oriecoh(ie) = specprop.params.rotcoh;
+        
         % Coherence
         coh_stack(:,ie,1) = smooth(abs(specprop.cross.c1z_stack).^2./(specprop.power.c11_stack.*specprop.power.czz_stack),40);
         coh_stack(:,ie,2) = smooth(abs(specprop.cross.c2z_stack).^2./(specprop.power.c22_stack.*specprop.power.czz_stack),40);
@@ -106,6 +110,11 @@ for ista = 1:length(stations)
 
     NWINS = repmat(nwins(gooddays)',[1,length(f)]);
     ALLWINS = sum(nwins(gooddays));
+    
+    czz_all_st = czz_all(gooddays,:);
+    c11_all_st = c11_all(gooddays,:);
+    c22_all_st = c22_all(gooddays,:);
+    cpp_all_st = cpp_all(gooddays,:);
 
     czz_all = (czz_all(gooddays,:).*NWINS);
     c11_all = (c11_all(gooddays,:).*NWINS);
@@ -118,6 +127,9 @@ for ista = 1:length(stations)
     c2p_all = (c2p_all(gooddays,:).*NWINS);
     c2z_all = (c2z_all(gooddays,:).*NWINS);
     cpz_all = (cpz_all(gooddays,:).*NWINS);
+    
+    orall = orients(gooddays);
+    orcohall = oriecoh(gooddays);
 
     maxpow(1) = max(max(czz_all(:,1:end-1)))*100;
     maxpow(2) = max(max(c11_all(:,1:end-1)))*100;
@@ -143,14 +155,10 @@ for ista = 1:length(stations)
             disp(sprintf('Killed day %s', dayid));
             specprop.params.badflag = 1;
         end
-        
-        %     % Look for tilt orientations
-        %     [specprop.directions.tilt,specprop.directions.tiltcoh,specprop.directions.micro,specprop.directions.microcoh]...
-        %         = spec_orient(specprop,tiltfreq,microfreq,hangs,dayid,spectrum_Z,cspectrum_Z,spectrum_H1,spectrum_H2);
-        %
+
         %     % Add badflag and orientations to file
-    %         filename = [inpath,station,'_',dayid,'_spectra.mat'];
-    %         save(filename,'specprop');
+        filename = [inpath,netsta,'_',dayid,'_spectra.mat'];
+            save(filename,'specprop');
     end
 
     if isfigure
@@ -178,10 +186,10 @@ for ista = 1:length(stations)
     staavg.power.c11_mean = mean(c11_all,1).*length(gooddays)/ALLWINS;
     staavg.power.c22_mean = mean(c22_all,1).*length(gooddays)/ALLWINS;
 
-    staavg.power.czz_std = std(czz_all,1).*length(gooddays)/ALLWINS;
-    staavg.power.cpp_std = std(cpp_all,1).*length(gooddays)/ALLWINS;
-    staavg.power.c11_std = std(c11_all,1).*length(gooddays)/ALLWINS;
-    staavg.power.c22_std = std(c22_all,1).*length(gooddays)/ALLWINS;
+    staavg.power.czz_std = std(czz_all_st,1);
+    staavg.power.cpp_std = std(cpp_all_st,1);
+    staavg.power.c11_std = std(c11_all_st,1);
+    staavg.power.c22_std = std(c22_all_st,1);
 
     % Calculate average cross spectra
     staavg.cross.c12_mean = mean(c12_all,1).*length(gooddays)/ALLWINS;
@@ -191,18 +199,17 @@ for ista = 1:length(stations)
     staavg.cross.c2z_mean = mean(c2z_all,1).*length(gooddays)/ALLWINS;
     staavg.cross.cpz_mean = mean(cpz_all,1).*length(gooddays)/ALLWINS;
 
-    staavg.cross.c12_std = std(c12_all,1).*length(gooddays)/ALLWINS;
-    staavg.cross.c1p_std = std(c1p_all,1).*length(gooddays)/ALLWINS;
-    staavg.cross.c1z_std = std(c1z_all,1).*length(gooddays)/ALLWINS;
-    staavg.cross.c2p_std = std(c2p_all,1).*length(gooddays)/ALLWINS;
-    staavg.cross.c2z_std = std(c2z_all,1).*length(gooddays)/ALLWINS;
-    staavg.cross.cpz_std = std(cpz_all,1).*length(gooddays)/ALLWINS;
-
     avgprop.params.elev = elev;
     avgprop.params.freqcomp = freqcomp;
     avgprop.params.station = station;
     avgprop.params.network = network;
     avgprop.params.f = f;
+    avgprop.params.ndays = length(gooddays);
+    avgprop.params.nwindows = ALLWINS;
+    avgprop.params.orientation = mean(orall);
+    avgprop.params.oriencohere = mean(orcohall);
+    avgprop.params.orientationstd = std(orall);
+    avgprop.params.oriencoherestd = std(orcohall);
 
     filename = [outpath,netsta,'_spectraavg.mat'];
     save(filename,'staavg','avgprop');

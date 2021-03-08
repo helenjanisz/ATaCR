@@ -43,6 +43,7 @@ a_val_dep = 0.05;
 
 % Transfer Function Options
 TF_list = {'ZP','Z1','Z2-1','ZP-21','ZH','ZP-H'};
+% TF_list = {'ZP','Z1-P','Z2-1P','ZH','ZP-H'};
 % convention: Z1 = transfer function between Z and H1
 %             Z2-1 = transfer function between Z with H1 removed, and H2
 %		      ZP-21 = transfer function between Z with H1 and H2 removed, and P
@@ -56,5 +57,5 @@ tf_op = 1; %option for using either daily (1) or station average (2) TF in corre
 filop = 2; %how to filter TF
 % 1 - user specified constant high pass and low pass
 % 2 - %lowpass - 0.005+freqcomp, adaptive to the infragravity wave cutoff, no high pass;
-tap_width = 0.01; %width in percent of frequency vector of cosine taper is this actually used?????
+tap_width = 0.01; %width in percent of frequency vector of cosine taper 
 taper_lim = [0 1]; % upper and lower freuqncy in Hz limit for taper if user specified (option 1); zero means not applied

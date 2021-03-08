@@ -9,7 +9,7 @@
 % path/to/day/data/{station}/{station}.{yyyy}.{jday}.{hh}.{MM}.{ss}.{component}.sac
 %
 % J. Russell & H. Janiszewski 
-% hjaniszewski@carnegiescience.edu
+% hajanisz@hawaii.edu
 % updated 11/19
 
 clear;

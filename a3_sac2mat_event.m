@@ -10,7 +10,7 @@
 % path/to/event/data/{yyyymmddhhMM}/{yyyymmddhhMM}.{network}.{station}.{component}.sac
 %
 % J. Russell & H. Janiszewski 
-% hjaniszewski@carnegiescience.edu
+% hajanisz@hawaii.edu
 % updated 2/18
 
 clear;
@@ -28,7 +28,7 @@ ch1_vec = 'BH1'; %'BH1'; % list of acceptable names for H1 component
 ch2_vec = 'BH2'; %'BH2'; % list of acceptable names for H2 component
 chp_vec = 'BDH'; %'BDH'; % list of acceptable names for P component
 
-datacache = 'NOISETC_CI/DATA/datacache_day'; % output folder for data
+datacache = '/data/irma6/jrussel/YoungPacificORCA/TILTCOMP_NEW/ORCA_detrend/DATA/EVENT/'; %'./ENAM/DATA/EVENT/'; %'NOISETC_SAMPLE2/DATA/datacache'; % output folder for data
 
 %%%%% end user input parameters %%%%%
 
