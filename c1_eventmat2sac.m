@@ -17,9 +17,8 @@ clear;
 setup_parameter;
 
 inpath_uncorr = 'path/to/local/event/sac/files/';
-corr_idx = 3;
+str_corr = 'ZP-21'; % String for correction to output
 channel = 'BHZ';
-
 
 %% Load data
 
@@ -44,6 +43,7 @@ for ista = 1:length(stadirs)
             continue
         end
         load(fullfile(inpath_corr,filenames_corr(iev).name))
+        corr_idx = find(strcmp({corrseis.label},str_corr));
         corrdata = corrseis(corr_idx).timeseries;
         
         % Load data headers
