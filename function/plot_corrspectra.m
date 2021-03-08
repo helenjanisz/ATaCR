@@ -6,23 +6,27 @@ set(gcf,'PaperPositionMode','manual');
 set(gcf,'PaperUnits','inches');
 set(gcf,'PaperOrientation','portrait');
 set(gcf,'PaperPosition',[.05 .05 8 10.5]);
-
-psd_Z = disp2accel_psd(Zraw,NFFT,dt);
-psd_Z21 = disp2accel_psd(corrseis(2).timeseries,NFFT,dt);
-psd_ZP = disp2accel_psd(corrseis(4).timeseries,NFFT,dt);
-psd_ZP21 = disp2accel_psd(corrseis(3).timeseries,NFFT,dt);
+ilgd = 0;
 
 subplot(3,1,1);  box on;
-% Zraw
-semilogx(f,10*log10(psd_Z),'-k','linewidth',0.5); hold on;
-% Z2-1
-semilogx(f,10*log10(psd_Z21),'-r','linewidth',0.5)
-% ZP
-semilogx(f,10*log10(psd_ZP),'-','color',[0.5 0.5 0.5],'linewidth',0.5)
-% ZP-21
-semilogx(f,10*log10(psd_ZP21),'-b','linewidth',0.5)
+psd_Z = disp2accel_psd(Zraw,NFFT,dt);
+ilgd = ilgd+1;
+h1(ilgd) = semilogx(f,10*log10(psd_Z),'-k','linewidth',0.5); hold on;
+lgd{ilgd} = 'Z';
 
-legend('Z','Z2-1','ZP','ZP-21','location','southeast');
+clrs = lines(length(corrseis));
+psd_band_avg = zeros(length(corrseis),1);
+for icor = 1:length(corrseis)
+    ilgd = ilgd+1;
+    psd_Zcorr = disp2accel_psd(corrseis(icor).timeseries,NFFT,dt);
+
+    h1(ilgd) = semilogx(f,10*log10(psd_Zcorr),'-','color',clrs(icor,:),'linewidth',0.5); hold on;
+    lgd{ilgd} = corrseis(icor).label;
+    
+    % Calculate PSD within band of interest
+    Ifband = (f>=1/T2 & f<=1/T1);
+    psd_band_avg(icor) = mean(10*log10(psd_Zcorr(Ifband)));
+end
 
 % ---------- plot HLNM Peterson, 1993 ----------
 [LL,HH,FF] = noise_models(100); 
@@ -43,12 +47,17 @@ ylim([-200 -80]);
 semilogx([lp lp],[-200 -80],'-r')
 semilogx([hp hp],[-200 -80],'-r')
 
+legend(h1,lgd,'location','eastoutside');
+
 
 % PLOT DATA
 fn = 1/2/dt;
 [b,a]=butter(2,[1/fn/T2,1/fn/T1]);
 Z_filt  = filtfilt(b,a,Zraw);
-ZP21_filt  = filtfilt(b,a,corrseis(3).timeseries);
+
+% Find component with lowest PSD in frequency band of interest
+[~,i_best] = min(psd_band_avg);
+ZP21_filt  = filtfilt(b,a,corrseis(i_best).timeseries);
 
 % Zraw data
 subplot(3,1,2); box on;
@@ -61,7 +70,7 @@ xlim([min(taxis),max(taxis)]);
 subplot(3,1,3); box on;
 plot(taxis,ZP21_filt,'-k');
 xlabel('Time (s)');
-title('ZP-21');
+title(['Lowest Noise: ',corrseis(i_best).label]);
 xlim([min(taxis),max(taxis)]);
 
 end
@@ -126,7 +135,7 @@ function [PSD_lo,PSD_hi,f] = noise_models(npts)
 
 PI = 4*atan(1);
 T_lo = 0.1;                     % minimum period (seconds)
-T_hi = 100;                     % maximum period (seconds)
+T_hi = 10000;                     % maximum period (seconds)
 f_lo = 1/T_hi;                  % minimum frequency (Hz)
 f_hi = 1/T_lo;                  % maximum frequency (Hz)
 
