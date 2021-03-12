@@ -28,7 +28,7 @@ ch1_vec = 'BH1'; %'BH1'; % list of acceptable names for H1 component
 ch2_vec = 'BH2'; %'BH2'; % list of acceptable names for H2 component
 chp_vec = 'BDH'; %'BDH'; % list of acceptable names for P component
 
-datacache = 'NOISETC_CI/DATA/datacache_event'; %'./ENAM/DATA/EVENT/'; %'NOISETC_SAMPLE2/DATA/datacache'; % output folder for data
+datacache = 'NOISETC_CI/DATA/datacache'; %'./ENAM/DATA/EVENT/'; %'NOISETC_SAMPLE2/DATA/datacache'; % output folder for data
 
 %%%%% end user input parameters %%%%%
 
