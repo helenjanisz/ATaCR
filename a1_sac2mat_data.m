@@ -45,7 +45,7 @@ for id = 1:length(startlist)
    otime = datenum(eventid,'yyyymmddHHMM');
    starttime = datestr(otime,'yyyy-mm-dd HH:MM:SS');
    endtime = datestr(otime+datalength/3600/24,'yyyy-mm-dd HH:MM:SS');   
-   jday = otime - datenum(year(otime),1,1) + 1;
+   jday = floor(otime - datenum(year(otime),1,1) + 1);
    
    for ista =1:length(download_stations)
        clear traces_day
