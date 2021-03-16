@@ -1,4 +1,4 @@
-function [lc2c1,lc2c3,lc2c4,lc3c4_c2,lc3c1_c2,lc4c1_c3c2,label_list] = comp3_calctransfunc(TF_cal,cnn_stack,cnm_stack,f)
+function [lc2c1,lc2c3,lc2c4,lc3c4_c2,lc3c1_c2,lc4c1_c3c2,label_list,gc1c1_c2,gc1c1_c3c2,gc1c1_c4c3c2,cohc1c3_c2,cohc1c4_c2,cohc1c4_c3c2] = comp3_calctransfunc_new(TF_cal,cnn_stack,cnm_stack,f)
 
 TF_name = TF_cal{1};
 comp1 = TF_name(1);
@@ -211,6 +211,15 @@ elseif strcmp(comp4,'P')==1
         gc4c1 = conj(cnm_stack(:,6));
     end
 end
+if strcmp(comp1,'Z')==1
+    gc1c1= cnn_stack(:,1);
+elseif strcmp(comp1,'1')==1
+    gc1c1= cnn_stack(:,2);
+elseif strcmp(comp1,'2')==1
+    gc1c1= cnn_stack(:,3);
+elseif strcmp(comp1,'P')==1
+    gc1c1= cnn_stack(:,4);
+end 
 
 lc2c1=gc2c1./gc2c2;
 lc2c3=gc2c3./gc2c2;
@@ -224,6 +233,11 @@ cohc2c4=abs(gc2c4).^2./(gc2c2.*gc4c4);
 gc3c3_c2=gc3c3.*(1-cohc2c3);
 gc4c4_c2=gc4c4.*(1-cohc2c4);
 
+% corrected spectra 1-2
+cohc1c2 = abs(gc2c1).^2./(gc2c2.*gc1c1); %coherence between pressure and vertical
+gc1c1_c2 = gc1c1.*(1-cohc1c2); %removing from the autospectra
+cohc1c4 = abs(gc4c1).^2./(gc4c4.*gc1c1); %coherence between pressure and vertical
+
 %removing the effect of channel 1 from the cross spectra
 gc3c1_c2=gc3c1-conj(lc2c3).*gc2c1;
 gc4c1_c2=gc4c1-conj(lc2c4).*gc2c1;
@@ -234,6 +248,11 @@ lc3c4_c2=gc3c4_c2./gc3c3_c2;
 %transfer function between 2 and y after removing the effect of channel 1
 lc3c1_c2=gc3c1_c2./gc3c3_c2;
 
+% corrected spectra 1-32
+cohc1c3_c2 = abs(gc3c1_c2).^2./(gc3c3_c2.*gc1c1_c2); %coherence between pressure and vertical
+cohc1c4_c2 = abs(gc4c1_c2).^2./(gc4c4_c2.*gc1c1_c2);
+gc1c1_c3c2 = gc1c1_c2.*(1-cohc1c3_c2); %removing from the autospectra
+
 %coherence between (2 and y), (3 and y) and (2 and 3) after removing effect
 %of channel 1
 cohc3c4_c2=abs(gc3c4_c2).^2./(gc4c4_c2.*gc3c3_c2);
@@ -242,6 +261,25 @@ gc4c4_c2c3=gc4c4_c2.*(1-cohc3c4_c2);
 gc4c1_c2c3=gc4c1_c2-conj(lc3c4_c2).*gc3c1_c2;
 
 lc4c1_c3c2 = gc4c1_c2c3./gc4c4_c2c3; % final TF
+
+% corrected spectra 1-432
+cohc1c4_c3c2 = abs(gc4c1_c2c3).^2./(gc4c4_c2c3.*gc1c1_c3c2); %coherence between pressure and vertical
+gc1c1_c4c3c2 = gc1c1_c3c2.*(1-cohc1c4_c3c2); %removing from the autospectra
+
+% Debugging
+% figure(99)
+% clf
+% loglog(f,gc1c1_c2,'-k');hold on
+% loglog(f,gc1c1_c3c2,'-b');hold on
+% loglog(f,gc1c1_c4c3c2,'-c');hold on
+% loglog(f,gc1c1,'-r')
+% % 
+% figure(98)
+% clf
+% semilogx(f,cohc1c2,'-k');hold on
+% semilogx(f,cohc1c3_c2,'-b');hold on
+% semilogx(f,cohc1c4_c3c2,'-c');hold on
+% semilogx(f,cohc1c4,'-r');
 
 return
 
