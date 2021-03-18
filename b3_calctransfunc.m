@@ -194,7 +194,7 @@ for ie = 1 : length(spectra_filenames)+1
                 TFs(ii).transfunc = lc2c1;
                 ii = ii+1;
                 TF_matrix(:,ie,(TF_list_sort(itf))) = lc2c1; %for plotting
-            elseif length(TF_cal{1}) == 5 % 3 component TF
+            elseif length(TF_cal{1}) == 5 % 3 component TF   
                 [lc2c1,lc2c3,lc2c4,lc3c4_c2,lc3c1_c2,lc4c1_c3c2,label_list] = comp3_calctransfunc(TF_cal,cnn_stack,cnm_stack,f);
                 TF_check(TF_list_sort(itf)) = 1;
                 TFs(ii).label = label_list{1};
