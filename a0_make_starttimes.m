@@ -19,15 +19,25 @@ Ndays = 4;
 % Load event list
 evlist = textread(evfile,'%s');
 
-fid = fopen(dayfile,'w');
+daylist = {};
+ii = 0;
 for iev = 1:length(evlist)
     evnum = datenum(evlist(iev),'yyyymmddHHMM');
     daynums = flip(evnum - [1:Ndays]);
     for iday = 1:length(daynums)
         % day = datestr(daynums(iday),'yyyymmddHHMM');
         day = datestr(daynums(iday),'yyyymmdd0000'); % Assume files start at beginning of day
-        fprintf(fid,'%s\n',day);
+        ii = ii + 1;
+        daylist{ii} = day;
     end    
+end
+% Remove repeating times
+daylist = unique(daylist);
+
+% Save starttimes to text file
+fid = fopen(dayfile,'w');
+for iev = 1:length(daylist)
+    fprintf(fid,'%s\n',daylist{iev});
 end
 fclose(fid);
 
