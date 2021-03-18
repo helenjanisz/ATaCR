@@ -1,4 +1,4 @@
-function [lc2c1,lc2c3,lc2c4,lc3c4_c2,lc3c1_c2,lc4c1_c3c2,label_list,gc1c1_c2,gc1c1_c3c2,gc1c1_c4c3c2,cohc1c3_c2,cohc1c4_c2,cohc1c4_c3c2] = comp3_calctransfunc_new(TF_cal,cnn_stack,cnm_stack,f)
+function [lc2c1,lc2c3,lc2c4,lc3c4_c2,lc3c1_c2,lc4c1_c3c2,label_list] = comp3_calctransfunc_new(TF_cal,cnn_stack,cnm_stack,f)
 
 TF_name = TF_cal{1};
 comp1 = TF_name(1);
