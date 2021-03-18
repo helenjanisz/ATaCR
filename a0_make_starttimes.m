@@ -24,7 +24,8 @@ for iev = 1:length(evlist)
     evnum = datenum(evlist(iev),'yyyymmddHHMM');
     daynums = flip(evnum - [1:Ndays]);
     for iday = 1:length(daynums)
-        day = datestr(daynums(iday),'yyyymmddHHMM');
+        % day = datestr(daynums(iday),'yyyymmddHHMM');
+        day = datestr(daynums(iday),'yyyymmdd0000'); % Assume files start at beginning of day
         fprintf(fid,'%s\n',day);
     end    
 end
