@@ -19,7 +19,9 @@ if ~isempty(trans_mat_files)
         iday = find(dday > 0); % find days prior to event
         [~,imin] = min(dday(iday)); % find min index
         min_idx = iday(imin); % index day nearest to event
-%         [min_diff,min_idx]=min(abs(eventid_num-tfid_num)); %find tf from closest day to event
+        if isempty(min_idx) % if no available day prior, use nearest day
+            [min_diff,min_idx]=min(abs(eventid_num-tfid_num)); %find tf from closest day to event
+        end
         dayid = tfid(min_idx,:);
         trans_filename = sprintf('%s%s_%s_transfun.mat',inpath_trans,station,dayid);
     end
