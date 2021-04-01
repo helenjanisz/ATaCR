@@ -78,6 +78,9 @@ for ista = 1:length(stations)
         comp_exist = [~isempty(idxZ), ~isempty(idx1), ~isempty(idx2), ~isempty(idxP)];
         if ~isempty(find(comp_exist==0))
             disp('Warning. At least one component is missing.')
+            if allchans ==1
+            continue
+            end
         end
         [Zraw,elevZ,rateZ,dtZ,startZ,endZ] = varsetup_dailystaspectra(traces_day(idxZ),comp_exist(1));
         [H1raw,elev1,rate1,dt1,start1,end1] = varsetup_dailystaspectra(traces_day(idx1),comp_exist(2));
@@ -142,7 +145,9 @@ for ista = 1:length(stations)
             if ind_zero(4) == 1
                 disp('P all zeros... skipping!')
             end
+            if allchans ==1
             continue
+            end
         end
         % Spectra parameters for resampled data
         npts = T/dt;

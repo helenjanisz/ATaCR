@@ -6,7 +6,7 @@
 clear; close all
 
 
-% CODE OPTIONS 
+% CODE OPTIONS
 isfigure = 1;
 issavefigure = 1;
 isoverwrite = 1; % if set to 0, will skip previously processed files
@@ -14,11 +14,10 @@ isoverwrite = 1; % if set to 0, will skip previously processed files
 % DO NOT EDIT BELOW
 setup_parameter;
 for ista = 1:length(stations)
-    clear gooddays 
+    clear gooddays
     clear czz_all cpp_all c11_all c22_all
     clear c12_all c1p_all c1z_all c2p_all c2z_all cpz_all
-    clear spect spectsm coh_stack ph_stack ad_stack
-    clear c12
+    clear spect spectsm coh_stack ph_stack ad_stack orients oriecoh
     station = stations{ista};
     netsta = [network,station];
     close all
@@ -33,13 +32,16 @@ for ista = 1:length(stations)
     if ~exist(outpath)
         mkdir(outpath);
     end
-    
+
     if ~isoverwrite && exist([outpath,netsta,'_spectraavg.mat'])
         display(['Skipping ',station]);
         continue
     end
 
     spectra_filenames = dir(fullfile(inpath,['*.mat']));
+    if isempty(spectra_filenames) == 1
+        continue
+    end
 
     for ie = 1:length(spectra_filenames)
         load(fullfile(inpath,spectra_filenames(ie).name));
@@ -49,13 +51,13 @@ for ista = 1:length(stations)
         dayid = spectra_filenames(ie).name((a+4):(a+15));
         disp(dayid);
         nwins(ie) = length(specprop.params.goodwins);
-        
+
         % Station power spectra
         czz_all(ie,:) = specprop.power.czz_stack;
         cpp_all(ie,:) = specprop.power.cpp_stack;
         c11_all(ie,:) = specprop.power.c11_stack;
         c22_all(ie,:) = specprop.power.c22_stack;
-        
+
         % Station cross spectra
         c12_all(ie,:) = specprop.cross.c12_stack;
         c1p_all(ie,:) = specprop.cross.c1p_stack;
@@ -63,21 +65,21 @@ for ista = 1:length(stations)
         c2p_all(ie,:) = specprop.cross.c2p_stack;
         c2z_all(ie,:) = specprop.cross.c2z_stack;
         cpz_all(ie,:) = specprop.cross.cpz_stack;
-        
+
         spect(:,ie,1) = specprop.power.czz_stack;
         spect(:,ie,2) = specprop.power.c11_stack;
         spect(:,ie,3) = specprop.power.c22_stack;
         spect(:,ie,4) = specprop.power.cpp_stack;
-        
+
         spectsm(:,ie,1) = smooth(specprop.power.czz_stack,40);
         spectsm(:,ie,2) = smooth(specprop.power.c11_stack,40);
         spectsm(:,ie,3) = smooth(specprop.power.c22_stack,40);
         spectsm(:,ie,4) = smooth(specprop.power.cpp_stack,40);
-        
+
         % orientations
         orients(ie) = specprop.params.rotor;
         oriecoh(ie) = specprop.params.rotcoh;
-        
+
         % Coherence
         coh_stack(:,ie,1) = smooth(abs(specprop.cross.c1z_stack).^2./(specprop.power.c11_stack.*specprop.power.czz_stack),40);
         coh_stack(:,ie,2) = smooth(abs(specprop.cross.c2z_stack).^2./(specprop.power.c22_stack.*specprop.power.czz_stack),40);
@@ -85,7 +87,7 @@ for ista = 1:length(stations)
         coh_stack(:,ie,4) = smooth(abs(specprop.cross.c12_stack).^2./(specprop.power.c11_stack.*specprop.power.c22_stack),40);
         coh_stack(:,ie,5) = smooth(abs(specprop.cross.c1p_stack).^2./(specprop.power.c11_stack.*specprop.power.cpp_stack),40);
         coh_stack(:,ie,6) = smooth(abs(specprop.cross.c2p_stack).^2./(specprop.power.c22_stack.*specprop.power.cpp_stack),40);
-        
+
         % Phase
         ph_stack(:,ie,1) = 180/pi.*atan2(imag(specprop.cross.c1z_stack),real(specprop.cross.c1z_stack));
         ph_stack(:,ie,2) = 180/pi.*atan2(imag(specprop.cross.c2z_stack),real(specprop.cross.c2z_stack));
@@ -93,7 +95,7 @@ for ista = 1:length(stations)
         ph_stack(:,ie,4) = 180/pi.*atan2(imag(specprop.cross.c12_stack),real(specprop.cross.c12_stack));
         ph_stack(:,ie,5) = 180/pi.*atan2(imag(specprop.cross.c1p_stack),real(specprop.cross.c1p_stack));
         ph_stack(:,ie,6) = 180/pi.*atan2(imag(specprop.cross.c1p_stack),real(specprop.cross.c2p_stack));
-        
+
         % Admittance
         ad_stack(:,ie,1) = smooth(abs(specprop.cross.c1z_stack)./specprop.power.c11_stack,40);
         ad_stack(:,ie,2) = smooth(abs(specprop.cross.c2z_stack)./specprop.power.c22_stack,40);
@@ -110,7 +112,7 @@ for ista = 1:length(stations)
 
     NWINS = repmat(nwins(gooddays)',[1,length(f)]);
     ALLWINS = sum(nwins(gooddays));
-    
+
     czz_all_st = czz_all(gooddays,:);
     c11_all_st = c11_all(gooddays,:);
     c22_all_st = c22_all(gooddays,:);
@@ -127,7 +129,7 @@ for ista = 1:length(stations)
     c2p_all = (c2p_all(gooddays,:).*NWINS);
     c2z_all = (c2z_all(gooddays,:).*NWINS);
     cpz_all = (cpz_all(gooddays,:).*NWINS);
-    
+
     orall = orients(gooddays);
     orcohall = oriecoh(gooddays);
 
@@ -146,14 +148,16 @@ for ista = 1:length(stations)
         dayid = spectra_filenames(ie).name((a+4):(a+15));
         elev = specprop.params.elev;
         freqcomp = sqrt(9.8/(2*pi*elev));
-        
+
         if ~isempty(find(gooddays == ie))
             cc(ie,:) = [0.5 0.5 0.5];
             specprop.params.badflag = 0;
+            daysused(ie).id = dayid;
         else
             cc(ie,:) = [1 0 0 ];
             disp(sprintf('Killed day %s', dayid));
             specprop.params.badflag = 1;
+            daysused(ie).id = NaN;
         end
 
         %     % Add badflag and orientations to file
@@ -164,7 +168,7 @@ for ista = 1:length(stations)
     if isfigure
         plot_cleanstaspectra(spectsm,coh_stack,ph_stack,ad_stack,cc,netsta,f,maxpow,minpow);
     end
-        
+
     if isfigure && issavefigure
         figure(1)
         filename=sprintf('%s/%s_spectra',figoutpath,netsta);
@@ -210,6 +214,7 @@ for ista = 1:length(stations)
     avgprop.params.oriencohere = mean(orcohall);
     avgprop.params.orientationstd = std(orall);
     avgprop.params.oriencoherestd = std(orcohall);
+    avgprop.params.daysused = daysused;
 
     filename = [outpath,netsta,'_spectraavg.mat'];
     save(filename,'staavg','avgprop');
