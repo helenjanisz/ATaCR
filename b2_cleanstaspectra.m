@@ -70,23 +70,24 @@ for ista = 1:length(stations)
         spect(:,ie,2) = specprop.power.c11_stack;
         spect(:,ie,3) = specprop.power.c22_stack;
         spect(:,ie,4) = specprop.power.cpp_stack;
-
-        spectsm(:,ie,1) = smooth(specprop.power.czz_stack,40);
-        spectsm(:,ie,2) = smooth(specprop.power.c11_stack,40);
-        spectsm(:,ie,3) = smooth(specprop.power.c22_stack,40);
-        spectsm(:,ie,4) = smooth(specprop.power.cpp_stack,40);
+        
+        npts_smooth = floor(specprop.params.NFFT/1000)+1;
+        spectsm(:,ie,1) = smooth(specprop.power.czz_stack,npts_smooth);
+        spectsm(:,ie,2) = smooth(specprop.power.c11_stack,npts_smooth);
+        spectsm(:,ie,3) = smooth(specprop.power.c22_stack,npts_smooth);
+        spectsm(:,ie,4) = smooth(specprop.power.cpp_stack,npts_smooth);
 
         % orientations
         orients(ie) = specprop.params.rotor;
         oriecoh(ie) = specprop.params.rotcoh;
 
         % Coherence
-        coh_stack(:,ie,1) = smooth(abs(specprop.cross.c1z_stack).^2./(specprop.power.c11_stack.*specprop.power.czz_stack),40);
-        coh_stack(:,ie,2) = smooth(abs(specprop.cross.c2z_stack).^2./(specprop.power.c22_stack.*specprop.power.czz_stack),40);
-        coh_stack(:,ie,3) = smooth(abs(specprop.cross.cpz_stack).^2./(specprop.power.cpp_stack.*specprop.power.czz_stack),40);
-        coh_stack(:,ie,4) = smooth(abs(specprop.cross.c12_stack).^2./(specprop.power.c11_stack.*specprop.power.c22_stack),40);
-        coh_stack(:,ie,5) = smooth(abs(specprop.cross.c1p_stack).^2./(specprop.power.c11_stack.*specprop.power.cpp_stack),40);
-        coh_stack(:,ie,6) = smooth(abs(specprop.cross.c2p_stack).^2./(specprop.power.c22_stack.*specprop.power.cpp_stack),40);
+        coh_stack(:,ie,1) = smooth(abs(specprop.cross.c1z_stack).^2./(specprop.power.c11_stack.*specprop.power.czz_stack),npts_smooth);
+        coh_stack(:,ie,2) = smooth(abs(specprop.cross.c2z_stack).^2./(specprop.power.c22_stack.*specprop.power.czz_stack),npts_smooth);
+        coh_stack(:,ie,3) = smooth(abs(specprop.cross.cpz_stack).^2./(specprop.power.cpp_stack.*specprop.power.czz_stack),npts_smooth);
+        coh_stack(:,ie,4) = smooth(abs(specprop.cross.c12_stack).^2./(specprop.power.c11_stack.*specprop.power.c22_stack),npts_smooth);
+        coh_stack(:,ie,5) = smooth(abs(specprop.cross.c1p_stack).^2./(specprop.power.c11_stack.*specprop.power.cpp_stack),npts_smooth);
+        coh_stack(:,ie,6) = smooth(abs(specprop.cross.c2p_stack).^2./(specprop.power.c22_stack.*specprop.power.cpp_stack),npts_smooth);
 
         % Phase
         ph_stack(:,ie,1) = 180/pi.*atan2(imag(specprop.cross.c1z_stack),real(specprop.cross.c1z_stack));
@@ -97,12 +98,12 @@ for ista = 1:length(stations)
         ph_stack(:,ie,6) = 180/pi.*atan2(imag(specprop.cross.c1p_stack),real(specprop.cross.c2p_stack));
 
         % Admittance
-        ad_stack(:,ie,1) = smooth(abs(specprop.cross.c1z_stack)./specprop.power.c11_stack,40);
-        ad_stack(:,ie,2) = smooth(abs(specprop.cross.c2z_stack)./specprop.power.c22_stack,40);
-        ad_stack(:,ie,3) = smooth(abs(specprop.cross.cpz_stack)./specprop.power.cpp_stack,40);
-        ad_stack(:,ie,4) = smooth(abs(specprop.cross.c12_stack)./specprop.power.c11_stack,40);
-        ad_stack(:,ie,5) = smooth(abs(specprop.cross.c1p_stack)./specprop.power.c11_stack,40);
-        ad_stack(:,ie,6) = smooth(abs(specprop.cross.c2p_stack)./specprop.power.c22_stack,40);
+        ad_stack(:,ie,1) = smooth(abs(specprop.cross.c1z_stack)./specprop.power.c11_stack,npts_smooth);
+        ad_stack(:,ie,2) = smooth(abs(specprop.cross.c2z_stack)./specprop.power.c22_stack,npts_smooth);
+        ad_stack(:,ie,3) = smooth(abs(specprop.cross.cpz_stack)./specprop.power.cpp_stack,npts_smooth);
+        ad_stack(:,ie,4) = smooth(abs(specprop.cross.c12_stack)./specprop.power.c11_stack,npts_smooth);
+        ad_stack(:,ie,5) = smooth(abs(specprop.cross.c1p_stack)./specprop.power.c11_stack,npts_smooth);
+        ad_stack(:,ie,6) = smooth(abs(specprop.cross.c2p_stack)./specprop.power.c22_stack,npts_smooth);
     end
 
     gooddays = QC_cleanstaspectra_days(spect,comp_exist,f,pb_dep,tolerance_dep,a_val_dep);

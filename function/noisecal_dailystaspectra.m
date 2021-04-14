@@ -2,7 +2,7 @@ function [specprop] =noisecal_dailystaspectra(spectrum_Z,spectrum_H1,spectrum_H2
     cspectrum_Z,cspectrum_H1,cspectrum_H2,cspectrum_P,is_goodwin,f,comp_exist,linecol,...
     taxisZ,iptwin1,iptwin2,NFFT,dt,isfigure_powerspec,Zraw,dayid,hangs,tiltfreq,calrotation,isfigure_orient);
 
-smoothlevel = 100;
+smoothlevel = floor(NFFT/1000)+1;
 
 c11_stack=zeros(1,length(f))';
 c22_stack=zeros(1,length(f))';
