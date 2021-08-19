@@ -26,8 +26,9 @@ f_wt(f>pb(2)) = 0;
 a_D = abs(spect(:,:,ic));
 la_D = log10(a_D).*(f_wt*ones(1,Nwin));
 sla_D = zeros(size(a_D));
+npts_smooth = floor(length(f)*2/1000)+1;
 for ii = 1:Nwin
-    sla_D(:,ii) = smooth(la_D(:,ii),50);
+    sla_D(:,ii) = smooth(la_D(:,ii),npts_smooth);
     % sla_D(:,ii) = la_D(:,ii);
 end
 dsla_D(:,:,ic) = sla_D-mean(sla_D,2)*ones(1,Nwin);

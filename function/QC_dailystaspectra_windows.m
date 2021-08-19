@@ -50,7 +50,9 @@ for ic = 1:4
     a_D = abs(spect_D);
     la_D = log10(a_D).*(f_wt*ones(1,Nwin));
     sla_D = zeros(size(a_D));
+    npts_smooth = floor(length(npts)*2/1000)+1;
     for ii = 1:Nwin
+        
     sla_D(:,ii) = smooth(la_D(:,ii),50);
 %     sla_D(:,ii) = la_D(:,ii);
     end

@@ -254,6 +254,7 @@ xdft = fft(ACC,NFFT);
 xdft = xdft(1:NFFT/2+1);
 psdx = (1/(samprate*NFFT)).*abs(xdft).^2;
 psdx(2:end-1) = 2*psdx(2:end-1);
-psd = smooth(psdx,100);
+npts_smooth = floor(NFFT/1000)+1;
+psd = smooth(psdx,npts_smooth);
 
 end
