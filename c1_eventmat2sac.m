@@ -11,12 +11,18 @@
 % matlab generated filename... there was in issue using the wrong start
 % time for some files
 % updated 09/20
-
+%
+% Will try to read header information from original uncorrected sac files at inpath_uncorr,
+% otherwise will read header information from preprocessed mat files at inpath_eventmat.
+% Updated 09/21 - J. Russell
+%
+ 
 clear;
 
 setup_parameter;
 
 inpath_uncorr = 'path/to/local/event/sac/files/';
+inpath_eventmat = 'NOISETC_CI/DATA/datacache_prepro/'; % path to preprocessed event mat files
 str_corr = 'ZP-21'; % String for correction to output
 channel = 'BHZ';
 
@@ -47,7 +53,32 @@ for ista = 1:length(stadirs)
         corrdata = corrseis(corr_idx).timeseries;
         
         % Load data headers
-        sacin = rdsac(fullfile(sprintf('%s/%s/%s.%s.%s.%s.sac',inpath_uncorr,corrected.params.eventid, corrected.params.eventid, corrected.params.network, corrected.params.station, channel)));
+        sacfile = fullfile(sprintf('%s/%s/%s.%s.%s.%s.sac',inpath_uncorr,corrected.params.eventid, corrected.params.eventid, corrected.params.network, corrected.params.station, channel));
+        if exist(sacfile) % Check for original sac file to get header information
+            sacin = rdsac(sacfile);
+        else
+            % If original SAC file does not exist, read required header info from the mat file
+            matfile = fullfile(sprintf('%s/%s/%s_%s_%s.mat',inpath_eventmat,corrected.params.eventid, corrected.params.eventid, corrected.params.network, corrected.params.station));
+            matin = load(matfile);
+            icomp = find(strcmp({matin.traces.channel},channel));
+            sacin.HEADER.KNETWK = matin.traces(icomp).network;
+            sacin.HEADER.KSTNM = matin.traces(icomp).station;
+            sacin.HEADER.KCMPNM = matin.traces(icomp).channel;
+            sacin.HEADER.KHOLE = matin.traces(icomp).location;
+            sacin.HEADER.STLA = matin.traces(icomp).latitude;
+            sacin.HEADER.STLO = matin.traces(icomp).longitude;
+            sacin.HEADER.STEL = matin.traces(icomp).elevation;
+            sacin.HEADER.T0 = matin.traces(icomp).startTime;
+            
+            % header origin time values
+            tv = datevec(sacin.HEADER.T0(1));
+            sacin.HEADER.NZYEAR = tv(1);
+            sacin.HEADER.NZJDAY = datenum(tv(1:3)) - datenum(tv(1),1,1) + 1;
+            sacin.HEADER.NZHOUR = tv(4);
+            sacin.HEADER.NZMIN = tv(5);
+            sacin.HEADER.NZSEC = floor(tv(6));
+            sacin.HEADER.NZMSEC = (tv(6) - sacin.HEADER.NZSEC)*1e3;
+        end
         disp(corrected.params.eventid);
         for itr = 1 %1:length(traces)
                 if tf_op ==1
