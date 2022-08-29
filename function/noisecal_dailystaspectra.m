@@ -2,7 +2,7 @@ function [specprop] =noisecal_dailystaspectra(spectrum_Z,spectrum_H1,spectrum_H2
     cspectrum_Z,cspectrum_H1,cspectrum_H2,cspectrum_P,is_goodwin,f,comp_exist,linecol,...
     taxisZ,iptwin1,iptwin2,NFFT,dt,isfigure_powerspec,Zraw,dayid,hangs,tiltfreq,calrotation,isfigure_orient);
 
-smoothlevel = floor(NFFT/1000)+1;
+smoothlevel = 100;
 
 c11_stack=zeros(1,length(f))';
 c22_stack=zeros(1,length(f))';
@@ -38,7 +38,7 @@ for iwin = 1:length(is_goodwin)
         cpp = abs(spectrum_P(iwin,:)').^2*2/(NFFT*dt);
     else cpp = nan(1,length(f))';
     end
-    
+
     % complex cross-spectrum for each segment
     if comp_exist(1)==1 && comp_exist(2)==1
         c1z = spectrum_H1(iwin,:)'.*cspectrum_Z(iwin,:)'*2/(NFFT*dt);
@@ -58,7 +58,7 @@ for iwin = 1:length(is_goodwin)
     if comp_exist(3)==1 && comp_exist(4)==1
         c2p = spectrum_H2(iwin,:)'.*cspectrum_P(iwin,:)'*2/(NFFT*dt);
     end
-    
+
     if is_goodwin(iwin) == 1;
         if comp_exist(1) == 1
             czz_stack=czz_stack+czz;
@@ -72,7 +72,7 @@ for iwin = 1:length(is_goodwin)
         if comp_exist(4) ==1
             cpp_stack=cpp_stack+cpp;
         end
-        
+
         if comp_exist(1)==1 && comp_exist(2)==1
             c1z_stack=c1z_stack+c1z;
         end
@@ -91,10 +91,10 @@ for iwin = 1:length(is_goodwin)
         if comp_exist(3)==1 && comp_exist(4)==1
             c2p_stack=c2p_stack+c2p;
         end
-        
-        
+
+
         nwin_stack=nwin_stack+1;
-        
+
         if isfigure_powerspec
             figure(1)
             subplot(421)
@@ -130,31 +130,31 @@ if calrotation==1
     hang = max_or;
     cang = cos(hang*pi/180);
     sang = sin(hang*pi/180);
-    
+
     chh_stack=zeros(1,length(f))';
     czz_stack_rot=zeros(1,length(f))';
     chz_stack=zeros(1,length(f))';
     chp_stack=zeros(1,length(f))';
     nwin_stack_rot = 0;
     for ista = 1:length(is_goodwin)
-        if is_goodwin==0
+        if is_goodwin(ista)==0
             continue
-        end       
+        end
         spec_H = sang.*spectrum_H2(ista,:)'+cang.*spectrum_H1(ista,:)'; %rotated horizontal spectra and cross-spectra
-        
+
         chh = abs(spec_H).^2*2/(NFFT*dt);
         chz = spec_H.*(cspectrum_Z(ista,:)')*2/(NFFT*dt);
         if comp_exist(4)==1
         chp = spec_H.*(cspectrum_P(ista,:)')*2/(NFFT*dt);
         else chp = nan(1,length(f))';
         end
-        
+
         chh_stack=chh_stack+chh;
         chz_stack=chz_stack+chz;
         chp_stack=chp_stack+chp;
         nwin_stack_rot = nwin_stack_rot +1;
     end
-    
+
     chh_stack = chh_stack/nwin_stack_rot;
     chz_stack = chz_stack/nwin_stack_rot;
     chp_stack = chp_stack/nwin_stack_rot;
@@ -169,7 +169,7 @@ if calrotation==1
     specprop.rotation.chh_stack = chh_stack;
     specprop.rotation.chz_stack = chz_stack;
     specprop.rotation.chp_stack = chp_stack;
-    
+
     specprop.params.rotor = max_or;
     specprop.params.rotcoh = max_coh;
 end
@@ -181,7 +181,7 @@ specprop.cross.c12_stack=c12_stack/nwin_stack;
 specprop.cross.c1p_stack=c1p_stack/nwin_stack;
 specprop.cross.c2p_stack=c2p_stack/nwin_stack;
 
-if isfigure_powerspec  
+if isfigure_powerspec
     figure(1)
     subplot(422)
     loglog(f,(smooth(specprop.power.czz_stack,smoothlevel)),linecol,'LineWidth',1); hold on
