@@ -54,7 +54,7 @@ TF_list = {'ZP','Z1','Z2-1','ZP-21','ZH','ZP-H'};
 % Correction Options
 taptime = 0.075; % taper for seismogram correction step
 
-tf_op = 2; %option for using either daily (1) or station average (2) TF in correction
+tf_op = 1; %option for using either daily (1) or station average (2) TF in correction
 
 filop = 2; %how to filter TF
 % 1 - user specified constant high pass and low pass
