@@ -1,11 +1,26 @@
-function [max_coh_fine,max_or_fine] = spec_orient(spectrum_Z,spectrum_H1,spectrum_H2,cspectrum_Z,hangs,tiltfreq,f,isfig,dayid,isgoodwin,NFFT,dt)
+function [max_coh_fine,max_or_fine] = spec_orient(spectrum_Z,spectrum_H1,spectrum_H2,cspectrum_Z,hangs,tiltfreq,f,isfig,dayid,day_deploy,isgoodwin,NFFT,dt)
+
+% plot orientation versus days since deployment.
+% fixed the bug caused by leap year.
+% Updated 2022-12-12, by Yuechu Wu
+
 
 c = colormap('jet');
 
 hangint = hangs(2)-hangs(1);
 
-days = dayofyear(str2num(dayid(1:4)),str2num(dayid(5:6)),str2num(dayid(7:8)),0,0);
-cc=interp1(1:length(c),c,((days)/(365))*(length(c)-1)+1);
+days = dayofyear(str2double(dayid(1:4)),str2double(dayid(5:6)),str2double(dayid(7:8)),0,0);
+deploynum = datenum(day_deploy(1:8),'yyyymmdd');
+deploydate = datestr(deploynum,'yyyy-mmm-dd');
+iday = datenum(dayid(1:8),'yyyymmdd') - deploynum + 1;
+
+if isleapyear(str2double(day_deploy(1:4)))
+    year = 366;
+else
+    year = 365;
+end
+
+cc=interp1(1:length(c),c,((days)/(year))*(length(c)-1)+1);
 
 for ih = 1:length(hangs)
     hang = hangs(ih);
@@ -147,11 +162,13 @@ max_or_fine = max_or_fine;
 if isfig ==1
 figure(90)
     subplot(211); hold on
-    plot(days,max_or_fine,'o','MarkerFaceColor',cc,'MarkerSize',5,'MarkerEdgeColor','none');
-    title('Orientation of Maximum Coherence'); xlabel('Days Since January 1'); ylabel('Degrees from H1'); ylim([0 360])
+    plot(iday,max_or_fine,'o','MarkerFaceColor',cc,'MarkerSize',5,'MarkerEdgeColor','none');
+    title('Orientation of maximum coherence'); ylabel('Degrees from H1'); ylim([0 360]);
+    xlabel(sprintf('%s (%s)','Days since deployment',deploydate));
     subplot(212); hold on
-    plot(days,max_coh_fine,'o','MarkerFaceColor',cc,'MarkerSize',5,'MarkerEdgeColor','none');
-    title('Value of Maximum Coherence'); xlabel('Days Since January 1'); ylabel('Coherence'); ylim([0 1])
+    plot(iday,max_coh_fine,'o','MarkerFaceColor',cc,'MarkerSize',5,'MarkerEdgeColor','none');
+    title('Value of maximum coherence'); ylabel('Coherence'); ylim([0 1]);
+    xlabel(sprintf('%s (%s)','Days since deployment',deploydate));
 end
 
 return
