@@ -100,12 +100,12 @@ for ista = 1:length(stations) % begin station loop
             
             figure(1)
             subplot(211)
+            title(sprintf('%s-%s',network,station));
             clim([0 year]);
             colormap jet
             colorbar;
-            box on;
-            grid on;
-            title(sprintf('%s-%s',network,station));
+            box on
+            grid on
 
             subplot(212)
             clim([0 year]);
@@ -133,9 +133,9 @@ for ista = 1:length(stations) % begin station loop
         xlim([deploynum recoverynum]);
         datetick('x','mmmdd','keepticks');
         ylabel('Tilt angle (°)','FontSize',10);
-        box on;
-        grid on;
         title(sprintf('%s-%s',network,station));
+        box on
+        grid on
 
         subplot(2,1,2)
         plot(x,tiltcohs,'o','MarkerFaceColor','#2c6db3','MarkerSize',5,'MarkerEdgeColor','none');
@@ -145,8 +145,8 @@ for ista = 1:length(stations) % begin station loop
         ylabel('Coherence','FontSize',10);
         xlabel(sprintf('Date of year %s to %s',day_deploy(1:4),day_recovery(1:4)),'FontSize',10);
         set(gca,'YTick',0:0.2:1,'FontSize',10);
-        box on;
-        grid on;
+        box on
+        grid on
 
         figurename2 = sprintf('%s/%s_tilt_date.pdf',figoutpath,netsta);
         print('-dpdf',figurename2);
