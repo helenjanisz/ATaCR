@@ -4,7 +4,7 @@
 % date input by the user.
 %
 % The tilt characteristic depends on the selection of the tilt frequency
-% band, which can be obtained from Figures 2-4 plotted by b2_cleanstaspectra.m 
+% band, which can be obtained from Figures 2-4 plotted by b2_cleanstaspectra
 % and changed in the setup_paremeter. In the tilt frequency band, 
 % the coherence between Z and H is the largest, the admittance is 
 % nearly constant and the phase shift nearly zero.
