@@ -1,6 +1,6 @@
 function [specprop] =noisecal_dailystaspectra(spectrum_Z,spectrum_H1,spectrum_H2,spectrum_P,...
     cspectrum_Z,cspectrum_H1,cspectrum_H2,cspectrum_P,is_goodwin,f,comp_exist,linecol,...
-    taxisZ,iptwin1,iptwin2,NFFT,dt,isfigure_powerspec,Zraw,dayid,hangs,tiltfreq,calrotation,isfigure_orient);
+    taxisZ,iptwin1,iptwin2,NFFT,dt,isfigure_powerspec,Zraw,dayid,day_deploy,hangs,tiltfreq,calrotation,isfigure_orient);
 
 smoothlevel = floor(NFFT/1000)+1;
 
@@ -124,7 +124,7 @@ end
 
 if calrotation==1
     % get orientation
-    [max_coh,max_or] = spec_orient(spectrum_Z,spectrum_H1,spectrum_H2,cspectrum_Z,hangs,tiltfreq,f,isfigure_orient,dayid,is_goodwin,NFFT,dt);
+    [max_coh,max_or] = spec_orient(spectrum_Z,spectrum_H1,spectrum_H2,cspectrum_Z,hangs,tiltfreq,f,isfigure_orient,dayid,day_deploy,is_goodwin,NFFT,dt);
     % calculate needed spectral parameters for TFs down the line for
     % maximum orientation
     hang = max_or;
