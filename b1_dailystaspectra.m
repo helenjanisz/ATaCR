@@ -48,6 +48,7 @@ for ista = 1:length(stations)
         figure(90);clf
         figure(105);clf
     end
+    day_deploy = day_filenames(1).name(1:12);
     for ie = 1 : length(day_filenames)
         if isfigure_spectrogram == 1
         figure(96);clf
@@ -197,11 +198,11 @@ for ista = 1:length(stations)
         if isfigure_powerspec
         [specprop_all] = noisecal_dailystaspectra(spectrum_Z,spectrum_H1,spectrum_H2,spectrum_P,...
             cspectrum_Z,cspectrum_H1,cspectrum_H2,cspectrum_P,ones(size(is_goodwin)),f,comp_exist,...
-            '-r',taxisZ,iptwin1,iptwin2,NFFT,dt,isfigure_powerspec,Zraw,dayid,hangs,tiltfreq,0,isfigure_orient);
+            '-r',taxisZ,iptwin1,iptwin2,NFFT,dt,isfigure_powerspec,Zraw,dayid,day_deploy,hangs,tiltfreq,0,isfigure_orient);
         end
         [specprop] = noisecal_dailystaspectra(spectrum_Z,spectrum_H1,spectrum_H2,spectrum_P,...
             cspectrum_Z,cspectrum_H1,cspectrum_H2,cspectrum_P,is_goodwin,f,comp_exist,...
-            '-k',taxisZ,iptwin1,iptwin2,NFFT,dt,isfigure_powerspec,Zraw,dayid,hangs,tiltfreq,1,isfigure_orient);
+            '-k',taxisZ,iptwin1,iptwin2,NFFT,dt,isfigure_powerspec,Zraw,dayid,day_deploy,hangs,tiltfreq,1,isfigure_orient);
         
         % Save parameters in structure
         specprop.params.f = f;
@@ -238,13 +239,20 @@ for ista = 1:length(stations)
     end
 
     if isfigure_orient && issavefigure
+
+        if isleapyear(str2double(day_deploy(1:4)))
+            year = 366;
+        else
+            year = 365;
+        end
+
         figure(105)
         subplot(121)
-        caxis([0 365])
+        clim([0 year])
         colormap jet
         colorbar
         subplot(122)
-        caxis([0 365])
+        clim([0 year])
         colormap jet
         colorbar
         set(gcf,'PaperPositionMode','manual');
@@ -258,13 +266,18 @@ for ista = 1:length(stations)
         
         figure(90)
         subplot(211)
-        caxis([0 365])
+        clim([0 365])
         colormap jet
         colorbar
+        box on
+        grid on
+        
         subplot(212)
-        caxis([0 365])
+        clim([0 365])
         colormap jet
         colorbar
+        box on
+        grid on
         set(gcf,'PaperPositionMode','manual');
         set(gcf,'PaperUnits','inches');
         set(gcf,'PaperOrientation','portrait');
