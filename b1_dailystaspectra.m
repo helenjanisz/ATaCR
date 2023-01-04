@@ -8,10 +8,10 @@
 clear; close all
 
 % CODE OPTIONS
-isfigure_spectrogram = 1; % generate spectrograms for each day
-isfigure_powerspec = 1; % generate power spectra for each day
-isfigure_orient = 1;
-issavefigure = 1; % save output figures
+isfigure_spectrogram = 0; % generate spectrograms for each day
+isfigure_powerspec = 0; % generate power spectra for each day
+isfigure_orient = 0;
+issavefigure = 0; % save output figures
 isoverwrite = 1; % overwrite spectra files
 
 % DO NOT EDIT BELOW
@@ -48,7 +48,9 @@ for ista = 1:length(stations)
         figure(90);clf
         figure(105);clf
     end
+    if length(day_filenames)~=0
     day_deploy = day_filenames(1).name(1:12);
+    end
     for ie = 1 : length(day_filenames)
         if isfigure_spectrogram == 1
         figure(96);clf
