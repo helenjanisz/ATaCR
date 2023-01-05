@@ -1,7 +1,7 @@
 function plot_cleanstaspectra(spect,coh_stack,ph_stack,ad_stack,cc,station,f,maxpow,minpow);
 
 comporder = {'Z','H1','H2','P'};
-plotorder = {'1Z','2Z','HZ','PZ'};
+plotorder = {'1Z','2Z','HZ','PZ','12','P1','P2'};
 
 % Plotting Power Spectra
 figure(1)

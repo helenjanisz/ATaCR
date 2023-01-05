@@ -1,4 +1,4 @@
-function [lc2c1,label_list] = comp1_calctransfunc(TF_cal,cnn_stack,cnm_stack,f)
+function [lc2c1,label_list,gc1c1_c2] = comp1_calctransfunc(TF_cal,cnn_stack,cnm_stack,f)
 % function for calcating transfer function between two components
 TF_name = TF_cal{1};
 comp1 = TF_name(1);
@@ -56,13 +56,19 @@ end
 
 lc2c1 = gc2c1./gc2c2;
 
+
+cohc1c2 = abs(gc2c1).^2./(gc2c2.*gc1c1); %coherence between pressure and vertical
+gc1c1_c2 = gc1c1.*(1-cohc1c2); %removing from the autospectra
+
 % Debugging
-% cohc1c2 = abs(gc2c1).^2./(gc2c2.*gc1c1); %coherence between pressure and vertical
-% gc1c1_c2 = gc1c1.*(1-cohc1c2); %removing from the autospectra
 % figure(99)
 % clf
 % loglog(f,gc1c1_c2);hold on
 % loglog(f,gc1c1,'-r')
 
+% figure(98)
+% clf
+% semilogx(f,cohc1c2_c2);hold on
+% semilogx(f,cohc1c2,'-r');
 
 return
