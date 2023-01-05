@@ -53,7 +53,7 @@ for is = 1 : length(station_dir)
     end
     
 for ie = 1 : length(spectra_filenames)+1
-    clear cnn_stack cnm_stack
+    clear cnn_stack cnm_stack crr_stack
     TF_check = zeros(size(TF_size));
     if ie == length(spectra_filenames)+1
         dayid = 'AVERAGE';
