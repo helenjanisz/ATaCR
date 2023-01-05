@@ -3,16 +3,16 @@
 % path for matlab codes and functions
 addpath ('function');
 % location of the continuous matlab files for spectral properties
-WORKINGdir = 'NOISETC_CI/DATA/datacache_day_preproc/';
+WORKINGdir = 'DATA/datacache_day_preproc/';
 % output directory for spectra
-OUTdir = 'NOISETC_CI/DATA/NOISETC';
+OUTdir = 'DATA/NOISETC';
  % directory for figure output
-FIGdir = 'NOISETC_CI/FIGURES/NOISETC';
+FIGdir = 'FIGURES/';
 
 
 % information for station
 network = '7D';
-stations = textread('./NOISETC_CI/stalist.txt','%s');
+stations = textread('stalist.txt','%s');
 
 % Channel Names
 chz_vec = {['HHZ'], ['BHZ'], ['LHZ']}; % list of acceptable names for Z component
@@ -45,7 +45,7 @@ a_val_dep = 0.05;
 
 % Transfer Function Options
 TF_list = {'ZP','Z1','Z2-1','ZP-21','ZH','ZP-H'};
-% TF_list = {'ZP','Z1-P','Z2-1P','ZH','ZP-H'};
+% TF_list = {'ZP','Z1'};
 % convention: Z1 = transfer function between Z and H1
 %             Z2-1 = transfer function between Z with H1 removed, and H2
 %		      ZP-21 = transfer function between Z with H1 and H2 removed, and P
@@ -60,4 +60,4 @@ filop = 2; %how to filter TF
 % 1 - user specified constant high pass and low pass
 % 2 - %lowpass - 0.005+freqcomp, adaptive to the infragravity wave cutoff, no high pass;
 tap_width = 0.01; %width in percent of frequency vector of cosine taper
-taper_lim = [0 1]; % upper and lower freuqncy in Hz limit for taper if user specified (option 1); zero means not applied
+taper_lim = [0 .1]; % upper and lower freuqncy in Hz limit for taper if user specified (option 1); zero means not applied

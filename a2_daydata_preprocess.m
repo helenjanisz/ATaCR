@@ -11,14 +11,14 @@
 % HAJ July 2016
 
 addpath ('function');
-INPUTdir = 'NOISETC_CI/DATA/datacache_day';
-OUTPUTdir = 'NOISETC_CI/DATA/datacache_day_preproc/';
+INPUTdir = 'DATA/datacache_day';
+OUTPUTdir = 'DATA/datacache_day_preproc/';
 
 % pole_zero_dir='directory_where_SACPZ_files_are_here'; % for response removal if using sac PZ files
 pole_zero_dir=''; % if not using leave blank
 
 network = '7D';
-stations = textread('./NOISETC_CI/stalist.txt','%s'); 
+stations = textread('stalist.txt','%s'); 
 % channels = {'HHZ','HH1','HH2','HDH'};
 % channels = {'HXZ','HX1','HX2','HXH'};
 channels = {'BHZ','BH1','BH2','BDH'};
