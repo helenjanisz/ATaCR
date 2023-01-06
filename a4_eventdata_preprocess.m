@@ -11,6 +11,8 @@
 % Make sure preprocessing steps for a given station 
 % HAJ July 2016
 
+clear all
+
 addpath ('function');
 INPUTdir = 'DATA/datacache/';
 OUTPUTdir = 'DATA/datacache_preproc/';
@@ -20,26 +22,26 @@ pole_zero_dir=''; % if not using leave blank
 
 network = '7D';
 stations = textread('stalist.txt','%s');
-% channels = {'HHZ','HH1','HH2','HDH'};
+channels = {'HHZ','HH1','HH2','HDH'};
 % channels = {'HXZ','HX1','HX2','HXH'};
-channels = {'BHZ','BH1','BH2','BDH'};
+% channels = {'BHZ','BH1','BH2','BDH'};
 % channels = {'HHZ','HH1','HH2','BDH'};
 
 % Example for case where no gain correction is applied and response is
 % removed from all channels
 %%%%
-resprm = [1 1 1 1]; % for each channel 1 means remove response, 0 means don't. Order matches channels vector
-gaincorr = [1 1 1 1]; % gain correction factor to multiply data by for each channel
-samprate = 5; % new sample rate for each channel (note: for tilt/comp package must all be equal)
-hp_filt = [0 0 0 0]; % apply high pass filter
+% resprm = [1 1 1 1]; % for each channel 1 means remove response, 0 means don't. Order matches channels vector
+% gaincorr = [1 1 1 1]; % gain correction factor to multiply data by for each channel
+% samprate = 5; % new sample rate for each channel (note: for tilt/comp package must all be equal)
+% hp_filt = [0 0 0 0]; % apply high pass filter
 
 % Example for case where gain correction is applied and response is only
 % removed from seismometer channels
 %%%%
-% resprm = [1 1 1 0]; % for each channel 1 means remove response, 0 means don't. Order matches channels vector
-% gaincorr = [2.37 2.37 2.37 2.37]; % gain correction factor to multiply data by for each channel
-% samprate = 5; % new sample rate for each channel (note: for tilt/comp package must all be equal)
-% hp_filt = [0 0 0 1]; % apply high pass filter
+resprm = [1 1 1 0]; % for each channel 1 means remove response, 0 means don't. Order matches channels vector
+gaincorr = [2.37 2.37 2.37 2.37]; % gain correction factor to multiply data by for each channel
+samprate = 5; % new sample rate for each channel (note: for tilt/comp package must all be equal)
+hp_filt = [0 0 0 1]; % apply high pass filter
 
 % parameters for high pass for response removal
 lo_corner = 0.001;  % in Hz
@@ -77,16 +79,17 @@ for ista = 1:length(stations)
         if ~exist([OUTPUTdir,eventid])
         mkdir([OUTPUTdir,eventid]);
     end
-        prob=0;
+        prob=zeros(1,length(channels)); % here change for prob for each channel, and skip saving if sum = 0 found issue that it overwrites with the wrong data if station doesnt' exist for a given channel. need to fix in a2 code as well
         for ic = 1:length(channels) % begin channel loop
             chan = channels(ic);
             idxch = find(ismember({traces.channel},chan));
             if length(idxch)>1
                 disp('Skipping. Too many records for single channel.')
-                prob = 1;
+                prob(ic) = 1;
                 continue
             end
             if isempty(idxch)
+                prob(ic) = 1;
                 continue
             end
             chan_data = traces(idxch);
@@ -96,6 +99,10 @@ for ista = 1:length(stations)
             % REMOVE RESPONSE
             %%%%%%%%%%%%%%%%%
             if resprm(ic) ==1
+                if isempty(traces_day(1).sacpz.poles) & isempty(pole_zero_dir)
+                    prob(ic) = 1;
+                    continue
+                end
                 chan_data = rm_resp(chan_data,eventid,lo_corner,npoles,pole_zero_dir);
                 data_raw = chan_data.data_cor;
             else
@@ -148,7 +155,9 @@ for ista = 1:length(stations)
             traces_new(idxch).sampleCount = length(data_raw);
         end % end channel loop
         %save good files
-        if prob ==0
+        if sum(prob) ==length(channels) % every channel bad, do not save
+            continue
+        else
             traces = traces_new;
             filename = fullfile(OUTPUTdir,eventid,'/',station_filenames(is).name);
             save(filename,'traces');

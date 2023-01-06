@@ -10,6 +10,8 @@
 % Each may be included or excluded depending on the needs of the user.
 % HAJ July 2016
 
+clear all
+
 addpath ('function');
 INPUTdir = 'DATA/datacache_day';
 OUTPUTdir = 'DATA/datacache_day_preproc/';
@@ -34,7 +36,7 @@ hp_filt = [0 0 0 0]; % apply high pass filter; high pass is applied during respo
 
 % Example for case where gain correction is applied and response is only
 % removed from seismometer channels
-%%%%
+%%%
 % resprm = [1 1 1 0]; % for each channel 1 means remove response, 0 means don't. Order matches channels vector
 % gaincorr = [2.37 2.37 2.37 2.37]; % gain correction factor to multiply data by for each channel
 % samprate = 5; % new sample rate for each channel (note: for tilt/comp package must all be equal)
@@ -66,17 +68,18 @@ for ista = 1:length(stations)
         load(fullfile(INPUTdir,network,station,'/',data_filenames(ie).name));
         traces_day_new = traces_day;
         dayid = data_filenames(ie).name(1:12);
-        prob=0;
+        prob=zeros(1,length(channels)); % here change for prob for each channel, and skip saving if sum = 0 found issue that it overwrites with the wrong data if station doesnt' exist for a given channel. need to fix in a2 code as well
         
         for ic = 1:length(channels) % begin channel loop
             chan = channels(ic);
             idxch = find(ismember({traces_day.channel},chan));
             if length(idxch)>1
                 disp('Skipping. Too many records for single channel.')
-                prob = 1;
+                prob(ic) = 1;
                 continue
             end
             if isempty(idxch)
+                prob(ic) = 1;
                 continue
             end
             chan_data = traces_day(idxch);
@@ -88,7 +91,7 @@ for ista = 1:length(stations)
             %%%%%%%%%%%%%%%%%
             if resprm(ic) ==1
                 if isempty(traces_day(1).sacpz.poles) & isempty(pole_zero_dir)
-                    prob = 1;
+                    prob(ic) = 1;
                     continue
                 end
                 chan_data = rm_resp(chan_data,dayid,lo_corner,npoles,pole_zero_dir);
@@ -143,7 +146,9 @@ for ista = 1:length(stations)
             traces_day_new(idxch).sampleCount = length(data_raw);
         end % end channel loop
         %save good files
-        if prob ==0
+        if sum(prob) ==length(channels) % every channel bad, do not save
+            continue
+        else
             traces_day = traces_day_new;
             filename = fullfile(OUTPUTdir,network,station,'/',data_filenames(ie).name);
             save(filename,'traces_day');
