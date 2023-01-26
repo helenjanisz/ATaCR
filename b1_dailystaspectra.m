@@ -6,7 +6,7 @@
 % Helen Janiszewski 1/2017
 
 % updated from caxis to clim for compatability with matlab 2022. Change
-% back to caxis lines 253,262,276,283 if using older matlab.
+% back to caxis in lines 260,265,280,288 if using older matlab.
 
 % haj 01/2023
 
