@@ -3,7 +3,7 @@
 % operates on all stations for which spectra have been calculated
 % Helen Janiszewski 1/2017
 %
-% average transfer function of horizontal to vertical have been added
+% average transfer function of horizontal to vertical has been added
 % 2023-01-26, Yuechu Wu
 
 clear; close all
