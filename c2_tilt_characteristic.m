@@ -26,7 +26,7 @@ isfigure = [1 1]; % FIGURE SWITCH %
 % Figure 1: The horizontal axis is the number of days since deployment,
 % which requires a relatively long time to plot.
 % Figure 2: The horizontal axis is the date automatically matched,
-% the beginning and ending days may be trimmed.
+% the beginning and ending few days may be trimmed.
 
 
 % DO NOT EDIT BELOW
