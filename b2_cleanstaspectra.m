@@ -25,7 +25,7 @@ isfigure = 1;
 issavefigure = 1;
 isoverwrite = 1; % if set to 0, will skip previously processed files
 
-% All component options, for plotting power spectra 
+% All component options, for plotting power spectra.
 % comporder = {'Z','H1','H2','P'};
 comporder = {'Z','H1','H2','P'};
 
@@ -36,7 +36,7 @@ plotorder = {'1Z','2Z','HZ','PZ','P1','P2'};
 
 % DO NOT EDIT BELOW
 setup_parameter;
-for ista = 1:length(stations)
+for ista = 1:length(stations) % begin station loop
     clear gooddays
     clear czz_all cpp_all c11_all c22_all chh_all
     clear c12_all c1p_all c1z_all c2p_all c2z_all cpz_all chz_all chp_all
@@ -254,4 +254,4 @@ for ista = 1:length(stations)
 
     filename = [outpath,netsta,'_spectraavg.mat'];
     save(filename,'staavg','avgprop');
-end % station loop
+end % end station loop
