@@ -5,18 +5,18 @@
 % pre-process or use your own
 % Helen Janiszewski 1/2017
 
-% updated from clim to caxis for compatability with matlab 2022. Change
-% back to clim lines 253,262,276,283 if using older matlab.
+% updated from caxis to clim for compatability with matlab 2022. Change
+% back to caxis lines 253,262,276,283 if using older matlab.
 
 % haj 01/2023
 
 clear; close all
 
 % CODE OPTIONS
-isfigure_spectrogram = 0; % generate spectrograms for each day
-isfigure_powerspec = 0; % generate power spectra for each day
-isfigure_orient = 0;
-issavefigure = 0; % save output figures
+isfigure_spectrogram = 1; % generate spectrograms for each day
+isfigure_powerspec = 1; % generate power spectra for each day
+isfigure_orient = 1; % generate tilt orientation for each day
+issavefigure = 1; % save output figures
 isoverwrite = 1; % overwrite spectra files
 
 % DO NOT EDIT BELOW
@@ -32,15 +32,15 @@ for ista = 1:length(stations)
 
     c = colormap('jet');
 
-    if ~exist(outpath)
+    if ~exist(outpath,'dir')
         mkdir(outpath);
     end
 
-    if ~exist(figoutpath)
+    if ~exist(figoutpath,'dir')
         mkdir(figoutpath);
     end
 
-    if ~exist(rotoutpath)
+    if ~exist(rotoutpath,'dir')
         mkdir(rotoutpath);
     end
 
@@ -53,8 +53,8 @@ for ista = 1:length(stations)
         figure(90);clf
         figure(105);clf
     end
-    if length(day_filenames)~=0
-    day_deploy = day_filenames(1).name(1:12);
+    if ~isempty(day_filenames)
+        day_deploy = day_filenames(1).name(1:12);
     end
     for ie = 1 : length(day_filenames)
         if isfigure_spectrogram == 1
@@ -68,9 +68,9 @@ for ista = 1:length(stations)
         dayid = day_filenames(ie).name(1:12);
         specfilename = sprintf('%s%s_%s_spectra.mat',outpath,netsta,dayid);
         if exist(specfilename,'file') && isoverwrite ==0
-    			disp(['Exist: ',specfilename,', Skip!']);
-    			continue;
-    		end
+            disp(['Exist: ',specfilename,', Skip!']);
+            continue;
+        end
         disp(dayid);
         
         idxZ = find(ismember({traces_day.channel},chz_vec));
@@ -84,7 +84,7 @@ for ista = 1:length(stations)
         end
         
         comp_exist = [~isempty(idxZ), ~isempty(idx1), ~isempty(idx2), ~isempty(idxP)];
-        if ~isempty(find(comp_exist==0))
+        if ~isempty(find(comp_exist==0, 1))
             disp('Warning. At least one component is missing.')
             if allchans ==1
             continue
@@ -96,7 +96,7 @@ for ista = 1:length(stations)
         [Praw,elevP,rateP,dtP,startP,endP] = varsetup_dailystaspectra(traces_day(idxP),comp_exist(4));
         
         elev = [elevZ,elev1,elev2,elevP];
-        elev = unique(elev(find(comp_exist==1)));
+        elev = unique(elev(comp_exist==1));
         if length(elev)>1
             disp('Warning, mismatched elevations')
         end
@@ -104,7 +104,7 @@ for ista = 1:length(stations)
         
         starttimes = [startZ,start1,start2,startP];
         if length(unique(starttimes))>1
-            if diff(unique(starttimes))>dtZ;
+            if diff(unique(starttimes))>dtZ
                 disp('Skipping. Not all start times are equal.')
                 continue
             end
@@ -124,7 +124,8 @@ for ista = 1:length(stations)
             [H1raw,taxis1] = resample(H1raw,dt,dt1);
             [H2raw,taxis2] = resample(H2raw,dt,dt2);
             [Praw,taxisP] = resample(Praw,dt,dtP);
-        else dt = 1/rateZ;
+        else
+            dt = 1/rateZ;
             taxisZ = [0:dt:(length(Zraw)-1)*dt]';
             taxis1 = [0:dt:(length(H1raw)-1)*dt]';
             taxis2 = [0:dt:(length(H2raw)-1)*dt]';
@@ -132,7 +133,7 @@ for ista = 1:length(stations)
         end
         
         data_length = [length(Zraw),length(H1raw),length(H2raw),length(Praw)];
-        if length(unique(data_length(find(comp_exist==1))))>1
+        if length(unique(data_length(comp_exist==1)))>1
             disp('Skipping. Different data lengths.')
             continue
         end
@@ -166,7 +167,7 @@ for ista = 1:length(stations)
         f = samprate/2*linspace(0,1,NFFT/2+1);
         overn = floor(overlap*npts);
         
-        if data_length/samprate<80000
+        if data_length/samprate<min_data_length
             disp('Skipping. Not enough data for the day.')
             continue
         end
@@ -188,7 +189,8 @@ for ista = 1:length(stations)
         if nwin<minwin
             disp('Not enough good data segments.')
             continue
-        else disp(sprintf('%d good windows.Proceeding...',nwin));
+        else
+            fprintf('%d good windows.Proceeding...\n',nwin);
         end
         
         % Calculating spectra for each component
@@ -255,13 +257,15 @@ for ista = 1:length(stations)
 
         figure(105)
         subplot(121)
-        caxis([0 year])
+        clim([0 year])
         colormap jet
         colorbar
+        ylabel(colorbar,'Day of year')
         subplot(122)
-        caxis([0 year])
+        clim([0 year])
         colormap jet
         colorbar
+        ylabel(colorbar,'Day of year')
         set(gcf,'PaperPositionMode','manual');
         set(gcf,'PaperUnits','inches');
         set(gcf,'PaperOrientation','portrait');
@@ -273,16 +277,18 @@ for ista = 1:length(stations)
         
         figure(90)
         subplot(211)
-        caxis([0 365])
+        clim([0 year])
         colormap jet
         colorbar
+        ylabel(colorbar,'Day of year')
         box on
         grid on
         
         subplot(212)
-        caxis([0 365])
+        clim([0 year])
         colormap jet
         colorbar
+        ylabel(colorbar,'Day of year')
         box on
         grid on
         set(gcf,'PaperPositionMode','manual');
