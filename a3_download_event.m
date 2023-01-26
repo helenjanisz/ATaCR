@@ -22,7 +22,7 @@ ch1_vec = 'HH1,BH1'; % list of acceptable names for H1 component
 ch2_vec = 'HH2,BH2'; % list of acceptable names for H2 component
 chp_vec = 'HDH,BDH'; % list of acceptable names for P component
 
-datacache = 'DATA/datacache/'; % output folder for data
+datacache = 'DATA/datacache'; % output folder for data
 
 %%%%% end user input parameters %%%%%
 
@@ -35,9 +35,9 @@ chanlist = sprintf('%s,%s,%s,%s',chz_vec,ch1_vec,ch2_vec,chp_vec);
 
 for id = 1:length(startlist)
    eventid = cell2mat(startlist(id));
-   disp(sprintf('Start Time: %s',eventid));
+   fprintf('Start Time: %s\n',eventid);
    if length(eventid) == 12
-        otime = datenum(eventid,'yyyymmddHHMM'); % look at this when I get back
+       otime = datenum(eventid,'yyyymmddHHMM'); % look at this when I get back
    elseif length(eventid) == 14
        otime = datenum(eventid,'yyyymmddHHMMSS');
        eventid = eventid(1:12); % for naming purposes only, start time will still be saved to the second in traces file
@@ -61,22 +61,22 @@ for id = 1:length(startlist)
            continue;
        end
        disp(['Downloading station: ',stnm,' From:',starttime,' To:',endtime]);
-		try
-            traces = irisFetch.Traces(network,stnm,'*',chanlist,starttime,endtime,'includePZ');
-			save(sta_filename,'traces');
-		catch e
-            e.message;
-            error = 1;
-        end
-        if error ==1
-            try % to try and get around the missing zeros for some pressure components                
-                traces = irisFetch.Traces(network,stnm,'*',chanlist,starttime,endtime);
-                save(sta_filename,'traces');
-            catch e
-                e.message;
-                continue;
-            end
-        end
+       try
+           traces = irisFetch.Traces(network,stnm,'*',chanlist,starttime,endtime,'includePZ');
+           save(sta_filename,'traces');
+       catch e
+           e.message;
+           error = 1;
+       end
+       if error ==1
+           try % to try and get around the missing zeros for some pressure components
+               traces = irisFetch.Traces(network,stnm,'*',chanlist,starttime,endtime);
+               save(sta_filename,'traces');
+           catch e
+               e.message;
+               continue;
+           end
+       end
     end
    
 end
