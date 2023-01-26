@@ -37,7 +37,7 @@ chanlist = sprintf('%s,%s,%s,%s',chz_vec,ch1_vec,ch2_vec,chp_vec);
 
 for id = 1:length(startlist)
    eventid = cell2mat(startlist(id));
-   disp(sprintf('Start Time: %s',eventid));
+   fprintf('Start Time: %s\n',eventid);
    otime = datenum(eventid,'yyyymmddHHMM');
    starttime = datestr(otime,'yyyy-mm-dd HH:MM:SS');
    endtime = datestr(otime+datalength/3600/24,'yyyy-mm-dd HH:MM:SS');
@@ -61,22 +61,22 @@ for id = 1:length(startlist)
            continue;
        end
        disp(['Downloading station: ',stnm,' From:',starttime,' To:',endtime]);
-		try
-            traces_day = irisFetch.Traces(network,stnm,'*',chanlist,starttime,endtime,'includePZ');
-			save(sta_filename,'traces_day');
-		catch e
-            e.message;
-            error = 1;
-        end
-        if error ==1
-            try % to try and get around the missing zeros for some pressure components                
-                traces_day = irisFetch.Traces(network,stnm,'*',chanlist,starttime,endtime);
-                save(sta_filename,'traces_day');
-            catch e
-                e.message;
-                continue;
-            end
-        end
+       try
+           traces_day = irisFetch.Traces(network,stnm,'*',chanlist,starttime,endtime,'includePZ');
+           save(sta_filename,'traces_day');
+       catch e
+           e.message;
+           error = 1;
+       end
+       if error ==1
+           try % to try and get around the missing zeros for some pressure components
+               traces_day = irisFetch.Traces(network,stnm,'*',chanlist,starttime,endtime);
+               save(sta_filename,'traces_day');
+           catch e
+               e.message;
+               continue;
+           end
+       end
     end
    
 end
