@@ -13,6 +13,9 @@
 % Smoothing removed due to issues at long periods when using high sample
 % rate data. Should replace with octave averaging.
 % HAJ 01-04-2023
+%
+% The user choice of component options have been added.
+% Updated 2023-01-25, by Yuechu Wu
 
 clear; close all
 
@@ -21,6 +24,15 @@ clear; close all
 isfigure = 1;
 issavefigure = 1;
 isoverwrite = 1; % if set to 0, will skip previously processed files
+
+% All component options, for plotting power spectra 
+% comporder = {'Z','H1','H2','P'};
+comporder = {'Z','H1','H2','P'};
+
+% All component pair options, for plotting three parameters (coherence, 
+% phase, and admittance) that describe the transfer function.
+% plotorder = {'1Z','2Z','HZ','PZ','12','P1','P2'};
+plotorder = {'1Z','2Z','HZ','PZ','P1','P2'};
 
 % DO NOT EDIT BELOW
 setup_parameter;
@@ -36,20 +48,20 @@ for ista = 1:length(stations)
     figoutpath=sprintf('%s/STATIONS_NOISEPROP/',FIGdir);
     outpath = sprintf('%s/AVG_STA/',OUTdir);
 
-    if ~exist(figoutpath)
+    if ~exist(figoutpath,'dir')
         mkdir(figoutpath);
     end
 
-    if ~exist(outpath)
+    if ~exist(outpath,'dir')
         mkdir(outpath);
     end
 
-    if ~isoverwrite && exist([outpath,netsta,'_spectraavg.mat'])
+    if ~isoverwrite && exist([outpath,netsta,'_spectraavg.mat'],'file')
         display(['Skipping ',station]);
         continue
     end
 
-    spectra_filenames = dir(fullfile(inpath,['*.mat']));
+    spectra_filenames = dir(fullfile(inpath,'*.mat'));
     if isempty(spectra_filenames) == 1
         continue
     end
@@ -68,6 +80,7 @@ for ista = 1:length(stations)
         cpp_all(ie,:) = specprop.power.cpp_stack;
         c11_all(ie,:) = specprop.power.c11_stack;
         c22_all(ie,:) = specprop.power.c22_stack;
+        chh_all(ie,:) = specprop.rotation.chh_stack;
 
         % Station cross spectra
         c12_all(ie,:) = specprop.cross.c12_stack;
@@ -76,6 +89,8 @@ for ista = 1:length(stations)
         c2p_all(ie,:) = specprop.cross.c2p_stack;
         c2z_all(ie,:) = specprop.cross.c2z_stack;
         cpz_all(ie,:) = specprop.cross.cpz_stack;
+        chz_all(ie,:) = specprop.rotation.chz_stack;
+        chp_all(ie,:) = specprop.rotation.chp_stack;
 
         spect(:,ie,1) = specprop.power.czz_stack;
         spect(:,ie,2) = specprop.power.c11_stack;
@@ -131,11 +146,13 @@ for ista = 1:length(stations)
     c11_all_st = c11_all(gooddays,:);
     c22_all_st = c22_all(gooddays,:);
     cpp_all_st = cpp_all(gooddays,:);
+    chh_all_st = chh_all(gooddays,:);
 
     czz_all = (czz_all(gooddays,:).*NWINS);
     c11_all = (c11_all(gooddays,:).*NWINS);
     c22_all = (c22_all(gooddays,:).*NWINS);
     cpp_all = (cpp_all(gooddays,:).*NWINS);
+    chh_all = (chh_all(gooddays,:).*NWINS);
 
     c12_all = (c12_all(gooddays,:).*NWINS);
     c1p_all = (c1p_all(gooddays,:).*NWINS);
@@ -143,6 +160,8 @@ for ista = 1:length(stations)
     c2p_all = (c2p_all(gooddays,:).*NWINS);
     c2z_all = (c2z_all(gooddays,:).*NWINS);
     cpz_all = (cpz_all(gooddays,:).*NWINS);
+    chz_all = (chz_all(gooddays,:).*NWINS);
+    chp_all = (chp_all(gooddays,:).*NWINS);
 
     orall = orients(gooddays);
     orcohall = oriecoh(gooddays);
@@ -163,24 +182,24 @@ for ista = 1:length(stations)
         elev = specprop.params.elev;
         freqcomp = sqrt(9.8/(2*pi*elev));
 
-        if ~isempty(find(gooddays == ie))
+        if ~isempty(find(gooddays == ie, 1))
             cc(ie,:) = [0.5 0.5 0.5];
             specprop.params.badflag = 0;
             daysused(ie).id = dayid;
         else
-            cc(ie,:) = [1 0 0 ];
-            disp(sprintf('Killed day %s', dayid));
+            cc(ie,:) = [1 0 0];
+            fprintf('Killed day %s\n', dayid);
             specprop.params.badflag = 1;
             daysused(ie).id = NaN;
         end
 
-        %     % Add badflag and orientations to file
+        % Add badflag to file
         filename = [inpath,netsta,'_',dayid,'_spectra.mat'];
-            save(filename,'specprop');
+        save(filename,'specprop');
     end
 
     if isfigure
-        plot_cleanstaspectra(spectsm,coh_stack,ph_stack,ad_stack,cc,netsta,f,maxpow,minpow);
+        plot_cleanstaspectra(spectsm,coh_stack,ph_stack,ad_stack,cc,netsta,f,maxpow,minpow,comporder,plotorder);
     end
 
     if isfigure && issavefigure
@@ -203,6 +222,7 @@ for ista = 1:length(stations)
     staavg.power.cpp_mean = mean(cpp_all,1).*length(gooddays)/ALLWINS;
     staavg.power.c11_mean = mean(c11_all,1).*length(gooddays)/ALLWINS;
     staavg.power.c22_mean = mean(c22_all,1).*length(gooddays)/ALLWINS;
+    staavg.rotation.chh_mean = mean(chh_all,1).*length(gooddays)/ALLWINS;
 
     staavg.power.czz_std = std(czz_all_st,1);
     staavg.power.cpp_std = std(cpp_all_st,1);
@@ -216,6 +236,8 @@ for ista = 1:length(stations)
     staavg.cross.c2p_mean = mean(c2p_all,1).*length(gooddays)/ALLWINS;
     staavg.cross.c2z_mean = mean(c2z_all,1).*length(gooddays)/ALLWINS;
     staavg.cross.cpz_mean = mean(cpz_all,1).*length(gooddays)/ALLWINS;
+    staavg.rotation.chz_mean = mean(chz_all,1).*length(gooddays)/ALLWINS;
+    staavg.rotation.chp_mean = mean(chp_all,1).*length(gooddays)/ALLWINS;
 
     avgprop.params.elev = elev;
     avgprop.params.freqcomp = freqcomp;
