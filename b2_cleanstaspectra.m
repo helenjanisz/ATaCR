@@ -14,7 +14,7 @@
 % rate data. Should replace with octave averaging.
 % HAJ 01-04-2023
 %
-% The user choice of component options have been added.
+% The user choice of component options has been added.
 % Updated 2023-01-25, by Yuechu Wu
 
 clear; close all
