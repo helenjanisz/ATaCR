@@ -10,11 +10,11 @@
 % Each may be included or excluded depending on the needs of the user.
 % HAJ July 2016
 
-clear all
+clear;
 
 addpath ('function');
 INPUTdir = 'DATA/datacache_day';
-OUTPUTdir = 'DATA/datacache_day_preproc/';
+OUTPUTdir = 'DATA/datacache_day_preproc';
 
 % pole_zero_dir='directory_where_SACPZ_files_are_here'; % for response removal if using sac PZ files
 pole_zero_dir=''; % if not using leave blank
@@ -45,11 +45,11 @@ hp_filt = [0 0 0 0]; % apply high pass filter; high pass is applied during respo
 
 % parameters for high pass for response removal
 lo_corner = 0.001;  % in Hz
-npoles=5;
+npoles = 5;
 
 %%%%% end user input parameters %%%%%
 
-if ~exist(OUTPUTdir)
+if ~exist(OUTPUTdir,'dir')
     mkdir(OUTPUTdir);
 end
 if ~exist(fullfile(OUTPUTdir,network),'dir')
@@ -68,6 +68,7 @@ for ista = 1:length(stations)
         load(fullfile(INPUTdir,network,station,'/',data_filenames(ie).name));
         traces_day_new = traces_day;
         dayid = data_filenames(ie).name(1:12);
+        fprintf('%s\n',dayid);
         prob=zeros(1,length(channels)); % here change for prob for each channel, and skip saving if sum = 0 found issue that it overwrites with the wrong data if station doesnt' exist for a given channel. need to fix in a2 code as well
         
         for ic = 1:length(channels) % begin channel loop
@@ -90,7 +91,7 @@ for ista = 1:length(stations)
             % REMOVE RESPONSE
             %%%%%%%%%%%%%%%%%
             if resprm(ic) ==1
-                if isempty(traces_day(1).sacpz.poles) & isempty(pole_zero_dir)
+                if isempty(traces_day(1).sacpz.poles) && isempty(pole_zero_dir)
                     prob(ic) = 1;
                     continue
                 end
@@ -108,7 +109,7 @@ for ista = 1:length(stations)
             % function to a different function, so they are the same, but the
             % user can specify parameters easily
             %%%%%%%%%%%%%%%%%
-            if hp_filt(ic) ==1
+            if hp_filt(ic) == 1
                 
                 lo_w=2*pi*lo_corner;
                 
@@ -125,7 +126,7 @@ for ista = 1:length(stations)
                 
                 hpfiltfrq=( ((w./lo_w).^(2*npoles))./(1+(w./lo_w).^(2*npoles)) );
                 norm_trans=hpfiltfrq;    % this is normalization transfer function
-                norm_trans(find(isnan(norm_trans))) = 0;
+                norm_trans(isnan(norm_trans)) = 0;
                 
                 fftdata = fft(data_raw);
                 fftdata = fftdata(:).*norm_trans(:);
