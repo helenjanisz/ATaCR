@@ -3,21 +3,25 @@ function outtrace = rm_resp(intrace,eventid,lo_corner,npoles,pole_zero_dir)
 % written by Ge Jin, 2014/02/27, adapted by H Janiszewski
 
 intrace = intrace(1);
-if isempty(pole_zero_dir)
-    pzexist=0;
-     disp('ERROR MISSING SACPZ FILE');
-else
-    % find SACPZ file for station (CAREFUL, ASSUMES ONE PER STATION FOR
-    % NOW)
-    filesuff = sprintf('SACPZ.%s.%s.--.%s',intrace.network,intrace.station,intrace.channel);
-    sacpz_filenames = dir(fullfile(pole_zero_dir,'/',filesuff));
-    if length(sacpz_filenames) == 1
-        pzfn_good=[pole_zero_dir '/' sacpz_filenames(1).name];
-        pzexist = 1;
+if isempty(intrace.sacpz.poles) % if sacpz does not exist in trace data, look for SACPZ file
+    if isempty(pole_zero_dir)
+        pzexist=0;
+        disp('ERROR MISSING SACPZ FILE');
     else
-        disp('ERROR BAD SACPZ FILE');
-        pzexist = 0;
+        % find SACPZ file for station (CAREFUL, ASSUMES ONE PER STATION FOR
+        % NOW)
+        filesuff = sprintf('SACPZ.%s.%s.--.%s',intrace.network,intrace.station,intrace.channel);
+        sacpz_filenames = dir(fullfile(pole_zero_dir,'/',filesuff));
+        if length(sacpz_filenames) == 1
+            pzfn_good=[pole_zero_dir '/' sacpz_filenames(1).name];
+            pzexist = 1;
+        else
+            disp('ERROR BAD SACPZ FILE');
+            pzexist = 0;
+        end
     end
+else
+    pzexist = 0;
 end
 
 % add back in reading a SAC PZ file, but clean it up
