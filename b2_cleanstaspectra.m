@@ -38,8 +38,8 @@ plotorder = {'1Z','2Z','HZ','PZ','P1','P2'};
 setup_parameter;
 for ista = 1:length(stations)
     clear gooddays
-    clear czz_all cpp_all c11_all c22_all
-    clear c12_all c1p_all c1z_all c2p_all c2z_all cpz_all
+    clear czz_all cpp_all c11_all c22_all chh_all
+    clear c12_all c1p_all c1z_all c2p_all c2z_all cpz_all chz_all chp_all
     clear spect spectsm coh_stack ph_stack ad_stack orients oriecoh
     station = stations{ista};
     netsta = [network,station];
