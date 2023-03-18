@@ -65,13 +65,15 @@ end
 
 isfigure = 0;
 
-data = intrace.data;
-data = detrend(data);
-data = flat_hanning_win(1:length(data),data,1,length(data),50);
-
 N = intrace.sampleCount;
 delta = 1/intrace.sampleRate;
 T = N*delta;
+
+data = intrace.data;
+data = detrend(data);
+% data = flat_hanning_win(1:length(data),data,1,length(data),50);
+data = flat_hanning_win(1:length(data),data,1,length(data),floor(T*0.05));
+
 
 if mod(N,2)
      faxis = [0:(N-1)/2,-(N-1)/2:-1]*(1/T);
