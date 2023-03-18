@@ -1,7 +1,7 @@
 function plot_cleanstaspectra(spect,coh_stack,ph_stack,ad_stack,cc,station,f,maxpow,minpow);
 
 comporder = {'Z','H1','H2','P'};
-plotorder = {'1Z','2Z','PZ','12','1P','2P','12'};
+plotorder = {'1Z','2Z','HZ','PZ','12','P1','P2'};
 
 % Plotting Power Spectra
 figure(1)
@@ -9,8 +9,8 @@ set(gcf,'PaperPositionMode','manual');
 set(gcf,'PaperUnits','inches');
 set(gcf,'PaperOrientation','portrait');
 set(gcf,'PaperPosition',[.05 .05 8 10.5]);
-for ip=1:4
-    subplot(4,1,ip)
+for ip = 1:length(comporder)
+    subplot(length(comporder),1,ip)
     set(gca,'ColorOrder',cc,'NextPlot','replacechildren');
     loglog(f,spect(:,:,ip),'-','LineWidth',.5)%,'Color',cc')
 %     hold on
@@ -47,9 +47,9 @@ set(gcf,'PaperUnits','inches');
 set(gcf,'PaperOrientation','portrait');
 set(gcf,'PaperPosition',[.05 .05 8 10.5]);
 
-for ip=1:6
+for ip = 1:length(plotorder)
     figure(2)
-    subplot(6,1,ip)
+    subplot(length(plotorder),1,ip)
     set(gca,'ColorOrder',cc,'NextPlot','replacechildren');
     semilogx(f',coh_stack(:,:,ip),'-','LineWidth',.5);%,'Color',cc);
     hold on
@@ -61,7 +61,7 @@ for ip=1:6
     box on
     
     figure(3)
-    subplot(6,1,ip)
+    subplot(length(plotorder),1,ip)
     set(gca,'ColorOrder',cc,'NextPlot','replacechildren');
     semilogx(f',ph_stack(:,:,ip),'o','MarkerSize',1);
     hold on
@@ -73,7 +73,7 @@ for ip=1:6
     box on
     
     figure(4)
-    subplot(6,1,ip)
+    subplot(length(plotorder),1,ip)
     set(gca,'ColorOrder',cc,'NextPlot','replacechildren');
     loglog(f',ad_stack(:,:,ip),'-','LineWidth',.5)
     hold on

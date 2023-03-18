@@ -53,7 +53,7 @@ for is = 1 : length(station_dir)
     end
     
 for ie = 1 : length(spectra_filenames)+1
-    clear cnn_stack cnm_stack
+    clear cnn_stack cnm_stack crr_stack
     TF_check = zeros(size(TF_size));
     if ie == length(spectra_filenames)+1
         dayid = 'AVERAGE';
@@ -188,14 +188,15 @@ for ie = 1 : length(spectra_filenames)+1
                 
             else % if component-wise
             if length(TF_cal{1}) == 2 % 1 component TF
-                [lc2c1,label_list] = comp1_calctransfunc(TF_cal,cnn_stack,cnm_stack,f);
+                [lc2c1,label_list,gc1c1_c2_P] = comp1_calctransfunc(TF_cal,cnn_stack,cnm_stack,f);
                 TF_check(TF_list_sort(itf)) = 1;
                 TFs(ii).label = label_list{1};
                 TFs(ii).transfunc = lc2c1;
                 ii = ii+1;
                 TF_matrix(:,ie,(TF_list_sort(itf))) = lc2c1; %for plotting
             elseif length(TF_cal{1}) == 5 % 3 component TF   
-                [lc2c1,lc2c3,lc2c4,lc3c4_c2,lc3c1_c2,lc4c1_c3c2,label_list] = comp3_calctransfunc(TF_cal,cnn_stack,cnm_stack,f);
+                [lc2c1,lc2c3,lc2c4,lc3c4_c2,lc3c1_c2,lc4c1_c3c2,label_list,gc1c1_c2,gc1c1_c3c2,gc1c1_c4c3c2]...
+                    = comp3_calctransfunc(TF_cal,cnn_stack,cnm_stack,f);
                 TF_check(TF_list_sort(itf)) = 1;
                 TFs(ii).label = label_list{1};
                 TFs(ii).transfunc = lc2c1;
@@ -247,9 +248,10 @@ for ie = 1 : length(spectra_filenames)+1
         
         
     end
-    
+
   filename = [outpath,station,'_',dayid,'_transfun.mat'];
         save(filename,'TFs','transprop')
+
         clear TFs
 end
 if isfigure==1 && isoverwrite==1

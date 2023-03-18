@@ -76,7 +76,6 @@ elseif strcmp(comp4,'P')==1
 end
 
 corrspec1_2 = spec_1-((TFs(TFidx12).transfunc_tap)'.*spec_2);
-% corrspec3_2 = spec_3-((TFs(TFidx32).transfunc_tap)'.*spec_1);
 corrspec3_2 = spec_3-((TFs(TFidx32).transfunc_tap)'.*spec_2);
 corrspec1_32 = corrspec1_2-((TFs(TFidx13_2).transfunc_tap)'.*corrspec3_2);
 corrspec4_2 = spec_4-((TFs(TFidx42).transfunc_tap)'.*spec_2);

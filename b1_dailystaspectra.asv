@@ -5,11 +5,6 @@
 % pre-process or use your own
 % Helen Janiszewski 1/2017
 
-% updated from clim to caxis for compatability with matlab 2022. Change
-% back to clim lines 253,262,276,283 if using older matlab.
-
-% haj 01/2023
-
 clear; close all
 
 % CODE OPTIONS
@@ -255,11 +250,11 @@ for ista = 1:length(stations)
 
         figure(105)
         subplot(121)
-        caxis([0 year])
+        clim([0 year])
         colormap jet
         colorbar
         subplot(122)
-        caxis([0 year])
+        clim([0 year])
         colormap jet
         colorbar
         set(gcf,'PaperPositionMode','manual');
@@ -273,14 +268,14 @@ for ista = 1:length(stations)
         
         figure(90)
         subplot(211)
-        caxis([0 365])
+        clim([0 365])
         colormap jet
         colorbar
         box on
         grid on
         
         subplot(212)
-        caxis([0 365])
+        clim([0 365])
         colormap jet
         colorbar
         box on
