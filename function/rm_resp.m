@@ -34,9 +34,12 @@ delta = 1/intrace.sampleRate;
 T = N*delta;
 
 data = intrace.data;
+% Remove linear trend
 data = detrend(data);
+% Apply 5% taper
+taxis = [0:length(data)-1]*delta;
+data = flat_hanning_win(taxis,data,taxis(1),taxis(end),floor(T*0.05));
 % data = flat_hanning_win(1:length(data),data,1,length(data),50);
-data = flat_hanning_win(1:length(data),data,1,length(data),floor(T*0.05));
 
 
 if mod(N,2)
