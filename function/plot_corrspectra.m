@@ -38,7 +38,7 @@ fill(xx,yy,[0.9 0.9 0.9],'FaceAlpha', 0.5,'EdgeColor','none');
 %fill(xx,yy,[0.9 0.9 0.9],'EdgeColor','none');	  
 grid on;set(gca,'layer','top');
 xlabel('Frequency (Hz)');
-ylabel('Power[DB], 10 \ast log[m^{2}/s^{4}/Hz]');
+ylabel('Power[dB], 10 \ast log[m^{2}/s^{4}/Hz]');
 title(sprintf ('%s %s',netsta,eventid ));
 xlim([1/250,max(f)]);
 ylim([-200 -80]);

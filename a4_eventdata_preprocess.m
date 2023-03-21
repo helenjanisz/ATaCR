@@ -11,45 +11,45 @@
 % Make sure preprocessing steps for a given station 
 % HAJ July 2016
 
-clear all
+clear;
 
 addpath ('function');
-INPUTdir = 'DATA/datacache/';
-OUTPUTdir = 'DATA/datacache_preproc/';
+INPUTdir = 'DATA/datacache';
+OUTPUTdir = 'DATA/datacache_preproc';
 
 % pole_zero_dir='directory_where_SACPZ_files_are_here'; % for response removal if using sac PZ files
 pole_zero_dir=''; % if not using leave blank
 
 network = '7D';
 stations = textread('stalist.txt','%s');
-channels = {'HHZ','HH1','HH2','HDH'};
+% channels = {'HHZ','HH1','HH2','HDH'};
 % channels = {'HXZ','HX1','HX2','HXH'};
-% channels = {'BHZ','BH1','BH2','BDH'};
+channels = {'BHZ','BH1','BH2','BDH'};
 % channels = {'HHZ','HH1','HH2','BDH'};
 
 % Example for case where no gain correction is applied and response is
 % removed from all channels
 %%%%
-% resprm = [1 1 1 1]; % for each channel 1 means remove response, 0 means don't. Order matches channels vector
-% gaincorr = [1 1 1 1]; % gain correction factor to multiply data by for each channel
-% samprate = 5; % new sample rate for each channel (note: for tilt/comp package must all be equal)
-% hp_filt = [0 0 0 0]; % apply high pass filter
+resprm = [1 1 1 1]; % for each channel 1 means remove response, 0 means don't. Order matches channels vector
+gaincorr = [1 1 1 1]; % gain correction factor to multiply data by for each channel
+samprate = 5; % new sample rate for each channel (note: for tilt/comp package must all be equal)
+hp_filt = [0 0 0 0]; % apply high pass filter
 
 % Example for case where gain correction is applied and response is only
 % removed from seismometer channels
 %%%%
-resprm = [1 1 1 0]; % for each channel 1 means remove response, 0 means don't. Order matches channels vector
-gaincorr = [2.37 2.37 2.37 2.37]; % gain correction factor to multiply data by for each channel
-samprate = 5; % new sample rate for each channel (note: for tilt/comp package must all be equal)
-hp_filt = [0 0 0 1]; % apply high pass filter
+% resprm = [1 1 1 0]; % for each channel 1 means remove response, 0 means don't. Order matches channels vector
+% gaincorr = [2.37 2.37 2.37 2.37]; % gain correction factor to multiply data by for each channel
+% samprate = 5; % new sample rate for each channel (note: for tilt/comp package must all be equal)
+% hp_filt = [0 0 0 1]; % apply high pass filter
 
 % parameters for high pass for response removal
 lo_corner = 0.001;  % in Hz
-        npoles=5;
+npoles = 5;
 
 %%%%% end user input parameters %%%%%
 
-if ~exist(OUTPUTdir)
+if ~exist(OUTPUTdir,'dir')
     mkdir(OUTPUTdir);
 end
 
@@ -58,27 +58,29 @@ data_filenames = dir(fullfile(INPUTdir));
 for ista = 1:length(stations)
     station = stations{ista};
     for ie = 1 : length(data_filenames) % begin file loop for each station
-        inpath = sprintf('%s%s/',INPUTdir,data_filenames(ie).name);
-        if ~isdir(inpath)
+        inpath = sprintf('%s/%s/',INPUTdir,data_filenames(ie).name);
+        if ~isfolder(inpath)
             continue
         end
-        if length(data_filenames(ie).name)~=12;
+        if length(data_filenames(ie).name)~=12
             continue
         end
-        station_filenames = dir(fullfile(inpath,['*.mat']));
+        station_filenames = dir(fullfile(inpath,'*.mat'));
         if isempty(station_filenames)
             continue
         end
         for is = 1:length(station_filenames)
-            if isempty(findstr([network,'_',station],station_filenames(is).name))
+            disp(station_filenames(is).name);
+            if isempty(strfind(station_filenames(is).name,[network,'_',station]))
                 continue
             end
             load(fullfile(INPUTdir,'/',data_filenames(ie).name,'/',station_filenames(is).name));
         traces_new = traces;
         eventid = data_filenames(ie).name(1:12);
-        if ~exist([OUTPUTdir,eventid])
-        mkdir([OUTPUTdir,eventid]);
-    end
+        fprintf('%s\n',eventid);
+        if ~exist(fullfile(OUTPUTdir,eventid),'dir')
+            mkdir(fullfile(OUTPUTdir,eventid));
+        end
         prob=zeros(1,length(channels)); % here change for prob for each channel, and skip saving if sum = 0 found issue that it overwrites with the wrong data if station doesnt' exist for a given channel. need to fix in a2 code as well
         for ic = 1:length(channels) % begin channel loop
             chan = channels(ic);
@@ -99,7 +101,7 @@ for ista = 1:length(stations)
             % REMOVE RESPONSE
             %%%%%%%%%%%%%%%%%
             if resprm(ic) ==1
-                if isempty(traces_day(1).sacpz.poles) & isempty(pole_zero_dir)
+                if isempty(chan_data.sacpz.poles) && isempty(pole_zero_dir)
                     prob(ic) = 1;
                     continue
                 end
@@ -134,7 +136,7 @@ for ista = 1:length(stations)
             
             hpfiltfrq=( ((w./lo_w).^(2*npoles))./(1+(w./lo_w).^(2*npoles)) );
             norm_trans=hpfiltfrq;    % this is normalization transfer function
-            norm_trans(find(isnan(norm_trans))) = 0;
+            norm_trans(isnan(norm_trans)) = 0;
             
             fftdata = fft(data_raw);
             fftdata = fftdata(:).*norm_trans(:);

@@ -2,12 +2,15 @@
 % calculate daily and deployment averaged transfer functions
 % operates on all stations for which spectra have been calculated
 % Helen Janiszewski 1/2017
+%
+% average transfer function of horizontal to vertical has been added
+% 2023-01-26, Yuechu Wu
 
-clear all; close all
+clear; close all
 
 isfigure = 1;
 issavefigure = 1;
-isoverwrite =1;
+isoverwrite = 1;
 
 %%%%%% DO NOT EDIT BELOW %%%%%%%
 setup_parameter;
@@ -24,7 +27,7 @@ TF_list_orig = TF_list;
 TF_list_sort_orig = TF_list_sort;
 
 figoutpath=sprintf('%s/STATIONS_TRANSFUNC/',FIGdir);
-if ~exist(figoutpath)
+if ~exist(figoutpath,'dir')
     mkdir(figoutpath);
 end
 
@@ -36,10 +39,10 @@ for is = 1 : length(station_dir)
     station = station_dir(is).name;
     inpath = sprintf('%s/SPECTRA/%s/',OUTdir,station);
     inpathav = sprintf('%s/AVG_STA/',OUTdir);
-    if ~isdir(inpath)
+    if ~isfolder(inpath)
         continue
     end
-    spectra_filenames = dir(fullfile(inpath,['*.mat']));
+    spectra_filenames = dir(fullfile(inpath,'*.mat'));
     if isempty(spectra_filenames)
         continue
     end
@@ -48,7 +51,7 @@ for is = 1 : length(station_dir)
     
     
     outpath = sprintf('%s/TRANSFUN/%s/',OUTdir,station);
-    if ~exist(outpath)
+    if ~exist(outpath,'dir')
         mkdir(outpath);
     end
     
@@ -69,6 +72,14 @@ for ie = 1 : length(spectra_filenames)+1
     cnn_stack(:,2) = staavg.power.c11_mean;
     cnn_stack(:,3) = staavg.power.c22_mean;
     cnn_stack(:,4) = staavg.power.cpp_mean;
+
+    % the horizontally rotated components
+    crr_stack(:,1) = staavg.power.czz_mean;
+    crr_stack(:,2) = staavg.rotation.chh_mean;
+    crr_stack(:,3) = staavg.rotation.chz_mean;
+    crr_stack(:,4) = staavg.rotation.chp_mean;
+    crr_stack(:,5) = staavg.power.cpp_mean;
+    crr_stack(:,6) = staavg.cross.cpz_mean;    
     
     cnm_stack(:,1) = staavg.cross.c1z_mean;
     cnm_stack(:,2) = staavg.cross.c2z_mean;
@@ -148,10 +159,10 @@ for ie = 1 : length(spectra_filenames)+1
             % first check if rotational or not
             
             % if rotational
-            if ~isempty(strfind(cell2mat(TF_cal),'H'))
-                if  ie == length(spectra_filenames)+1 % average doesn't make sense for this
-                    continue
-                end
+            if contains(cell2mat(TF_cal),'H')
+%                 if  ie == length(spectra_filenames)+1 % average doesn't make sense for this
+%                     continue
+%                 end
                 if length(TF_cal{1}) == 2 % 1 component rotational TF, i.e. ZH
                     [lc2c1,label_list] = comp1rotate_calctransfunc(TF_cal,crr_stack);
                     TF_check(TF_list_sort(itf)) = 1;
@@ -164,21 +175,21 @@ for ie = 1 : length(spectra_filenames)+1
                     TF_check(TF_list_sort(itf)) = 1;
                     TFs(ii).label = label_list{1};
                     TFs(ii).transfunc = lc2c1;
-                    if ~isempty(find(strcmp(label_list{1},TF_list)==1))
+                    if ~isempty(find(strcmp(label_list{1},TF_list)==1, 1))
                         TFidx = find(strcmp(label_list{1},TF_list)==1);
                         TF_check(TFidx)=1;
                         TF_matrix(:,ie,TFidx) = lc2c1; %for plotting
                     end
                     TFs(ii+1).label = label_list{2};
                     TFs(ii+1).transfunc = lc2c3;
-                    if ~isempty(find(strcmp(label_list{2},TF_list)==1))
+                    if ~isempty(find(strcmp(label_list{2},TF_list)==1, 1))
                         TFidx = find(strcmp(label_list{2},TF_list)==1);
                         TF_check(TFidx)=1;
                         TF_matrix(:,ie,TFidx) = lc2c3; %for plotting
                     end
                     TFs(ii+2).label = label_list{3};
                     TFs(ii+2).transfunc = lc3c1_c2;
-                    if ~isempty(find(strcmp(label_list{3},TF_list)==1))
+                    if ~isempty(find(strcmp(label_list{3},TF_list)==1, 1))
                         TFidx = find(strcmp(label_list{3},TF_list)==1);
                         TF_check(TFidx)=1;
                         TF_matrix(:,ie,TFidx) = lc3c1_c2; %for plotting
@@ -200,42 +211,42 @@ for ie = 1 : length(spectra_filenames)+1
                 TF_check(TF_list_sort(itf)) = 1;
                 TFs(ii).label = label_list{1};
                 TFs(ii).transfunc = lc2c1;
-                if ~isempty(find(strcmp(label_list{1},TF_list)==1))
+                if ~isempty(find(strcmp(label_list{1},TF_list)==1, 1))
                     TFidx = find(strcmp(label_list{1},TF_list)==1);
                     TF_check(TFidx)=1;
                     TF_matrix(:,ie,TFidx) = lc2c1; %for plotting
                 end
                 TFs(ii+1).label = label_list{2};
                 TFs(ii+1).transfunc = lc2c3;
-                if ~isempty(find(strcmp(label_list{2},TF_list)==1))
+                if ~isempty(find(strcmp(label_list{2},TF_list)==1, 1))
                     TFidx = find(strcmp(label_list{2},TF_list)==1);
                     TF_check(TFidx)=1;
                     TF_matrix(:,ie,TFidx) = lc2c3; %for plotting
                 end
                 TFs(ii+2).label = label_list{3};
                 TFs(ii+2).transfunc = lc2c4;
-                if ~isempty(find(strcmp(label_list{3},TF_list)==1))
+                if ~isempty(find(strcmp(label_list{3},TF_list)==1, 1))
                     TFidx = find(strcmp(label_list{3},TF_list)==1);
                     TF_check(TFidx)=1;
                     TF_matrix(:,ie,TFidx) = lc2c4; %for plotting
                 end
                 TFs(ii+3).label = label_list{4};
                 TFs(ii+3).transfunc = lc3c4_c2;
-                if ~isempty(find(strcmp(label_list{4},TF_list)==1))
+                if ~isempty(find(strcmp(label_list{4},TF_list)==1, 1))
                     TFidx = find(strcmp(label_list{4},TF_list)==1);
                     TF_check(TFidx)=1;
                     TF_matrix(:,ie,TFidx) = lc3c4_c2; %for plotting
                 end
                 TFs(ii+4).label = label_list{5};
                 TFs(ii+4).transfunc = lc3c1_c2;
-                if ~isempty(find(strcmp(label_list{5},TF_list)==1))
+                if ~isempty(find(strcmp(label_list{5},TF_list)==1, 1))
                     TFidx = find(strcmp(label_list{5},TF_list)==1);
                     TF_check(TFidx)=1;
                     TF_matrix(:,ie,TFidx) = lc3c1_c2; %for plotting
                 end
                 TFs(ii+5).label = label_list{6};
                 TFs(ii+5).transfunc = lc4c1_c3c2;
-                if ~isempty(find(strcmp(label_list{6},TF_list)==1))
+                if ~isempty(find(strcmp(label_list{6},TF_list)==1, 1))
                     TFidx = find(strcmp(label_list{6},TF_list)==1);
                     TF_check(TFidx)=1;
                     TF_matrix(:,ie,TFidx) = lc4c1_c3c2; %for plotting
@@ -255,24 +266,24 @@ for ie = 1 : length(spectra_filenames)+1
         clear TFs
 end
 if isfigure==1 && isoverwrite==1
-figure(1)
-for itf = 1:length(TF_list_sort)
-subplot(length(TF_list_sort),1,itf)
-set(gca,'ColorOrder',cc,'NextPlot','replacechildren');
-loglog(f,abs(TF_matrix(:,:,itf)),'-');
-title([station,'Transfer Function',TF_list{itf}]); xlim([10^-4 max(f)]); %ylim([y1/10, y2*10])
-set(gca,'yscale','log','xscale','log');
-end
-figure(1)
-set(gcf,'PaperPositionMode','manual');
-set(gcf,'PaperUnits','inches');
-set(gcf,'PaperOrientation','portrait');
-set(gcf,'PaperPosition',[.05 .05 8 10.5]);
+    figure(1)
+    for itf = 1:length(TF_list_sort)
+        subplot(length(TF_list_sort),1,itf)
+        set(gca,'ColorOrder',cc,'NextPlot','replacechildren');
+        loglog(f,abs(TF_matrix(:,:,itf)),'-');
+        title([station,' Transfer Function ',TF_list{itf}]); xlim([10^-4 max(f)]); % ylim([y1/10, y2*10])
+        set(gca,'yscale','log','xscale','log');
+    end
+    figure(1)
+    set(gcf,'PaperPositionMode','manual');
+    set(gcf,'PaperUnits','inches');
+    set(gcf,'PaperOrientation','portrait');
+    set(gcf,'PaperPosition',[.05 .05 8 10.5]);
 end
 
 if isfigure==1 && issavefigure==1 && isoverwrite==1
-filename=sprintf('%s/%s_tfs',figoutpath,station);
-print(gcf,'-dpng',filename)
+    filename=sprintf('%s/%s_tfs',figoutpath,station);
+    print(gcf,'-dpng',filename)
 end
 
 end

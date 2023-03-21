@@ -1,12 +1,9 @@
 % tilt_characteristic
 %
-% Calculate and plot the tilt characteristics of seismometers during the
-% date input by the user.
-%
-% The tilt characteristic depends on the selection of the tilt frequency
-% band, which can be obtained from Figures 2-4 plotted by b2_cleanstaspectra
-% and changed in the setup_paremeter. In the tilt frequency band, 
-% the coherence between Z and H is the largest, the admittance is 
+% The tilt characteristic of the seismometer depends on the selection of the 
+% tilt frequency band, which can be obtained from Figures 2-4 plotted by 
+% b2_cleanstaspectra and changed in the setup_paremeter. In the tilt frequency 
+% band, the coherence between Z and H is the largest, the admittance is 
 % nearly constant and the phase shift nearly zero.
 %
 % Reference:
@@ -19,23 +16,22 @@
 % 12131066@mail.sustech.edu.cn
 % 2022-10-08
 %
-% Added a figure with days since deployment days as the horizontal axis.
-% Start and end dates are no longer needed.
+% Added a figure with the number of days since deployment as the horizontal axis.
 % Updated 2022-12-12, by Yuechu Wu
+
 
 clear; close all;
 
-INPUTdir = 'NOISETC_CI/DATA/NOISETC/SPECTRA';
 isfigure = [1 1]; % FIGURE SWITCH %
 % Figure 1: The horizontal axis is the number of days since deployment,
 % which requires a relatively long time to plot.
 % Figure 2: The horizontal axis is the date automatically matched,
-% the first and last days may be trimmed.
+% the beginning and ending few days may be trimmed.
 
 
 % DO NOT EDIT BELOW
 setup_parameter;
-figoutpath = sprintf('%s/TILT',FIGdir);
+figoutpath = sprintf('%s/STATIONS_TILT',FIGdir);
 
 if ~exist(figoutpath,'dir')
     mkdir(figoutpath);
@@ -45,9 +41,9 @@ for ista = 1:length(stations) % begin station loop
     station = stations{ista};
     netsta = [network,station];
     close all;
-    inpath = [INPUTdir,'/',netsta];
+    inpath = sprintf('%s/SPECTRA/%s',OUTdir,netsta);
 
-    spectra_filenames = dir(fullfile(inpath,['*.mat']));
+    spectra_filenames = dir(fullfile(inpath,'*.mat'));
 
     if isempty(spectra_filenames)
         continue
@@ -68,7 +64,7 @@ for ista = 1:length(stations) % begin station loop
 
         splitname_ie = strsplit(spectra_filenames(ie).name,'_');
         dayid = splitname_ie{2};
-        fprintf('loading %s\n',spectra_filenames(ie).name);
+        fprintf('%s\n',dayid);
         load(fullfile(inpath,spectra_filenames(ie).name));
 
         iday = datenum(dayid(1:8),'yyyymmdd') - deploynum + 1;
@@ -100,19 +96,21 @@ for ista = 1:length(stations) % begin station loop
             
             figure(1)
             subplot(211)
-            title(sprintf('%s-%s',network,station));
-            clim([0 year]);
+            title(sprintf('%s %s',network,station));
+            clim([0 year])
             colormap jet
-            colorbar;
+            colorbar
+            ylabel(colorbar,'Day of year')
             box on
             grid on
 
             subplot(212)
-            clim([0 year]);
+            clim([0 year])
             colormap jet
-            colorbar;
-            box on;
-            grid on;
+            colorbar
+            ylabel(colorbar,'Day of year')
+            box on
+            grid on
 
             figurename1 = sprintf('%s/%s_tilt_days.pdf',figoutpath,netsta);
             print('-dpdf',figurename1);
@@ -132,8 +130,8 @@ for ista = 1:length(stations) % begin station loop
         plot(x,tiltangs,'o','MarkerFaceColor','#2c6db3','MarkerSize',5,'MarkerEdgeColor','none');
         xlim([deploynum recoverynum]);
         datetick('x','mmmdd','keepticks');
-        ylabel('Tilt angle (°)','FontSize',10);
-        title(sprintf('%s-%s',network,station));
+        ylabel('Tilt angle (°)');
+        title(sprintf('%s %s',network,station));
         box on
         grid on
 
@@ -142,9 +140,9 @@ for ista = 1:length(stations) % begin station loop
         xlim([deploynum recoverynum]);
         ylim([0 1]);
         datetick('x','mmmdd','keepticks');
-        ylabel('Coherence','FontSize',10);
-        xlabel(sprintf('Date of year %s to %s',day_deploy(1:4),day_recovery(1:4)),'FontSize',10);
-        set(gca,'YTick',0:0.2:1,'FontSize',10);
+        ylabel('Coherence');
+        xlabel(sprintf('Date of year %s to %s',day_deploy(1:4),day_recovery(1:4)));
+        set(gca,'YTick',0:0.2:1);
         box on
         grid on
 
