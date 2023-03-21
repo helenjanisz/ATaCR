@@ -29,15 +29,18 @@ A(1,4) = cellstr(intrace.network);
 
 isfigure = 0;
 
-
-data = intrace.data;
-data = data - mean(data); % demean 
-data = detrend(data);
-data = flat_hanning_win(1:length(data),data,1,length(data),50);
-
 N = intrace.sampleCount;
 delta = 1/intrace.sampleRate;
 T = N*delta;
+
+data = intrace.data;
+% Remove linear trend
+data = detrend(data);
+% Apply 5% taper
+taxis = [0:length(data)-1]*delta;
+data = flat_hanning_win(taxis,data,taxis(1),taxis(end),floor(T*0.05));
+% data = flat_hanning_win(1:length(data),data,1,length(data),50);
+
 
 if mod(N,2)
      faxis = [0:(N-1)/2,-(N-1)/2:-1]*(1/T);
