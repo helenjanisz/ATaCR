@@ -37,8 +37,8 @@ min_data_length = 80000; % minimum allowable length of day data, in seconds
 % Tilt orientation - only matters if using transfer functions with the 'H'
 % option, but package needs variables specified to run; leave as default if
 % not using
-tiltfreq = [.005, .035]; % specifying frequency ranges for maximum coherence search
-% tiltfreq = [1/20, 1/5]; % specifying frequency ranges for maximum coherence search
+% tiltfreq = [.005, .035]; % specifying frequency ranges for maximum coherence search
+tiltfreq = [0.002, 0.005]; % suitable for the example data, i.e., 7D M08A
 
 % Quality Control Parameters for Deployment Days
 pb_dep = [0.004 .2]; % pass-band, in Hz
