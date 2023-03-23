@@ -19,7 +19,7 @@
 % Added a figure with the number of days since deployment as the x-axis.
 % 2022-12-12, Yuechu Wu
 %
-% Added write tilt information in spectra file. Added plot tilt 
+% Added write tilt information to spectra file. Added plot tilt 
 % orientation, which is the same as Figure 90 of b1_dailystaspectra.
 % Optimized running speed.
 % 2023-02-09, Yuechu Wu
