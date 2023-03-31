@@ -35,7 +35,7 @@ clear; close all;
 isfigure_angle  = [1 1]; % TILT ANGLE, corresponding to Figures 1 & 2
 isfigure_orient = [1 1]; % TILT ORIENTATION, corresponding to Figures 3 & 4
 
-isoverwrite = 1; % overwrite tilt information in spectra file
+isoverwrite = 1; % overwrite tilt information to spectra file
 
 
 % DO NOT EDIT BELOW
@@ -49,6 +49,7 @@ end
 for ista = 1:length(stations) % begin station loop
     station = stations{ista};
     netsta = [network,station];
+    disp(netsta);
     close all;
     inpath = sprintf('%s/SPECTRA/%s',OUTdir,netsta);
 
