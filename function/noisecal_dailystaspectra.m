@@ -59,7 +59,7 @@ for iwin = 1:length(is_goodwin)
         c2p = spectrum_H2(iwin,:)'.*cspectrum_P(iwin,:)'*2/(NFFT*dt);
     end
 
-    if is_goodwin(iwin) == 1;
+    if is_goodwin(iwin) == 1
         if comp_exist(1) == 1
             czz_stack=czz_stack+czz;
         end
@@ -117,7 +117,7 @@ for iwin = 1:length(is_goodwin)
             xlim([1/250,max(f)]);
             title('P, Windows')
             xlabel('Frequency (Hz)')
-            ylabel('PSD (m^2/Hz)')
+            ylabel('PSD (Pa^2/Hz)')
         end
     end
 end

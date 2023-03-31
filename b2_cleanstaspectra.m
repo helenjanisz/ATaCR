@@ -3,19 +3,16 @@
 % averages
 % Helen Janiszewski 1/2021
 % 
-% The unimportant parameters '12', '1P' and '2P' have been removed, and 'HZ' 
-% has been added, which is useful for analyzing the tilt characteristics.
-% Updated 2022-12-12, by Yuechu Wu
+% The parameter 'HZ' has been added, which is useful 
+% for analyzing the tilt characteristics.
+% 2022-12-12, Yuechu Wu
 %
-% P1 and P2 are added back in for use with assessing shallow water
-% instrument behavior. 
-% NOTE: could add user choice here in future
 % Smoothing removed due to issues at long periods when using high sample
 % rate data. Should replace with octave averaging.
 % HAJ 01-04-2023
 %
 % The user choice of component options has been added.
-% Updated 2023-01-25, by Yuechu Wu
+% 2023-01-25, Yuechu Wu
 
 clear; close all
 

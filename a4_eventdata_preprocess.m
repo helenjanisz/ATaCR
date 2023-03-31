@@ -70,14 +70,14 @@ for ista = 1:length(stations)
             continue
         end
         for is = 1:length(station_filenames)
-            disp(station_filenames(is).name);
+            
             if isempty(strfind(station_filenames(is).name,[network,'_',station]))
                 continue
             end
             load(fullfile(INPUTdir,'/',data_filenames(ie).name,'/',station_filenames(is).name));
-        traces_new = traces;
-        eventid = data_filenames(ie).name(1:12);
-        fprintf('%s\n',eventid);
+            traces_new = traces;
+            eventid = data_filenames(ie).name(1:12);
+            fprintf('%s\n',eventid);
         if ~exist(fullfile(OUTPUTdir,eventid),'dir')
             mkdir(fullfile(OUTPUTdir,eventid));
         end
